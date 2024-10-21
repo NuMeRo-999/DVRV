@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public AudioSource jumpSound;
     public bool dead = false;
     public GameObject prefab;
+    public ControlHud ControlHud;
 
     void Start()
     {
@@ -77,8 +78,17 @@ public class PlayerController : MonoBehaviour
     {
         if (other.collider.tag == "Enemy")
         {
-            dead = true;
-            StartCoroutine(CourrutineGameOver());
+            if (ControlHud.vida > 1)
+            {
+                ControlHud.UpdateLife(ControlHud.vida - 1);
+                ControlHud.vida -= 1;
+            }
+            else
+            {
+                ControlHud.UpdateLife(ControlHud.vida - 1);
+                dead = true;
+                StartCoroutine(CourrutineGameOver());
+            }
         }
         isGrounded = true;
     }

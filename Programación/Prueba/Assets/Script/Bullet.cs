@@ -9,6 +9,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float speed = 5;
     [SerializeField] private float lifeTime = 10;
     [SerializeField] private int damage = 1;
+    public ControlHud ControlHud;
 
     void Start()
     {
@@ -31,6 +32,7 @@ public class Bullet : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             Destroy(other.gameObject);
+            ControlHud.UpdateScore(ControlHud.puntos + 10);
         }
 
         if (!other.CompareTag("Player"))

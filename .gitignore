@@ -66,3 +66,6 @@
 # Recursos temporales autogenerados de Android
 **/Assets/StreamingAssets/aa.meta
 **/Assets/StreamingAssets/aa/*
+
+# Vuforia package
+Realidad Virtual y Aumentada/*/Packages/com.ptc.vuforia.engine-10.25.4.tgz
