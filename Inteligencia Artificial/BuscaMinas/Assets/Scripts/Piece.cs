@@ -4,32 +4,86 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour
 {
-    public float x;
-    public float y;
+    public int x;
+    public int y;
     public bool isBomb = false;
     public Sprite bombSprite;
+    public Sprite flagSprite;
+    public Sprite normalPieceSprite;
     public Sprite[] numberSprites;
 
-    void Start()
-    {
+    [SerializeField] private bool isFlagged = false;
+    [SerializeField] private bool isRevealed = false;
 
+    public void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (!isFlagged && !isRevealed)
+            {
+                RevealPiece();
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            ToggleFlag();
+        }
     }
 
-    void Update()
+    private void RevealPiece()
     {
+        isRevealed = true;
 
-    }
-
-    public void OnMouseDown()
-    {
         if (isBomb)
         {
             GetComponent<SpriteRenderer>().sprite = bombSprite;
         }
         else
         {
-            Debug.Log("Bombs around: " + GridMapGenerator.gen.GetBombsAround((int)x, (int)y));
-            transform.GetComponent<SpriteRenderer>().sprite = numberSprites[GridMapGenerator.gen.GetBombsAround((int)x, (int)y)];
+            int bombsAround = GridMapGenerator.gen.GetBombsAround(x, y);
+            GetComponent<SpriteRenderer>().sprite = numberSprites[bombsAround];
+
+            if (bombsAround == 0)
+            {
+                RevealAdjacent();
+            }
+        }
+    }
+
+    private void RevealAdjacent()
+    {
+        for (int i = x - 1; i <= x + 1; i++)
+        {
+            for (int j = y - 1; j <= y + 1; j++)
+            {
+                if (i >= 0 && i < GridMapGenerator.gen.width && j >= 0 && j < GridMapGenerator.gen.height)
+                {
+                    Piece adjacentPiece = GridMapGenerator.gen.map[i][j].GetComponent<Piece>();
+
+                    if (!adjacentPiece.isRevealed && !adjacentPiece.isBomb)
+                    {
+                        adjacentPiece.RevealPiece();
+                    }
+                }
+            }
+        }
+    }
+
+    private void ToggleFlag()
+    {
+        if (!isRevealed)
+        {
+            isFlagged = !isFlagged;
+
+            if (isFlagged)
+            {
+                GetComponent<SpriteRenderer>().sprite = flagSprite;
+            }
+            else
+            {
+                GetComponent<SpriteRenderer>().sprite = normalPieceSprite;
+            }
         }
     }
 }

@@ -147,6 +147,8 @@ MonoBehaviour:
   y: 0
   isBomb: 0
   bombSprite: {fileID: -1573758420, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
+  flagSprite: {fileID: -1304721452, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
+  normalPieceSprite: {fileID: 1390278157, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
   numberSprites:
   - {fileID: 436843737, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
   - {fileID: -546346897, guid: c84b01c342f21db4fa457f4098760d59, type: 3}

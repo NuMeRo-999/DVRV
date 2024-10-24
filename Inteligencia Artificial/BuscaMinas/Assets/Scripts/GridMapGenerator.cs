@@ -10,7 +10,6 @@ public class GridMapGenerator : MonoBehaviour
     public int height = 10;
     public int bombCount = 10;
     public GameObject[][] map;
-    [SerializeField] int cont = 0;
 
     void Start()
     {
@@ -27,8 +26,8 @@ public class GridMapGenerator : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 map[i][j] = Instantiate(gridPiece, new Vector2(0.16f * j, 0.16f * i), Quaternion.identity, this.transform);
-                map[i][j].GetComponent<Piece>().x = i * 0.16f;
-                map[i][j].GetComponent<Piece>().y = j * 0.16f;
+                map[i][j].GetComponent<Piece>().x = i;
+                map[i][j].GetComponent<Piece>().y = j;
             }
         }
 
@@ -49,12 +48,13 @@ public class GridMapGenerator : MonoBehaviour
 
     void Update()
     {
-        
+
     }
 
     public int GetBombsAround(int x, int y)
     {
-        
+        int cont = 0;
+
         for (int i = x - 1; i <= x + 1; i++)
         {
             for (int j = y - 1; j <= y + 1; j++)
@@ -68,23 +68,6 @@ public class GridMapGenerator : MonoBehaviour
                 }
             }
         }
-        //if(x > 0 && y < height - 1 && map[x - 1][y + 1].GetComponent<Piece>().isBomb)
-        //    cont++;
-        //if (y < height - 1 && map[x][y + 1].GetComponent<Piece>().isBomb)
-        //    cont++;
-        //if (x < width - 1 && y < height - 1 && map[x + 1][y + 1].GetComponent<Piece>().isBomb)
-        //    cont++;
-        //if (x > 0 && map[x - 1][y].GetComponent<Piece>().isBomb)
-        //    cont++;
-        //if (x < width - 1 && map[x + 1][y].GetComponent<Piece>().isBomb)
-        //    cont++;
-        //if (x > 0 && y > 0 && map[x - 1][y - 1].GetComponent<Piece>().isBomb)
-        //    cont++;
-        //if (y > 0 && map[x][y - 1].GetComponent<Piece>().isBomb)
-        //    cont++;
-        //if (x < width - 1 && y > 0 && map[x + 1][y - 1].GetComponent<Piece>().isBomb)
-        //    cont++;
-
 
         return cont;
     }
