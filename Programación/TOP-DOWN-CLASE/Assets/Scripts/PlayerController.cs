@@ -26,10 +26,9 @@ public class PlayerController : MonoBehaviour
             ref movementInputSmoothVelocity,
             0.1f);
 
-        // Set animation parameters based on movement input
         animator.SetFloat("Horizontal", movementInput.x);
         animator.SetFloat("Vertical", movementInput.y);
-        animator.SetFloat("Speed", movementInput.magnitude);
+        animator.SetFloat("Speed", movementInput.sqrMagnitude);
     }
 
     void FixedUpdate()
