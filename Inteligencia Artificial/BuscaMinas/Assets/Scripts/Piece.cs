@@ -8,12 +8,13 @@ public class Piece : MonoBehaviour
     public int y;
     public bool isBomb = false;
     public Sprite bombSprite;
+    public Sprite explodeBomb;
     public Sprite flagSprite;
     public Sprite normalPieceSprite;
     public Sprite[] numberSprites;
 
     [SerializeField] private bool isFlagged = false;
-    [SerializeField] private bool isRevealed = false;
+    [SerializeField] public bool isRevealed = false;
 
     public void OnMouseOver()
     {
@@ -37,7 +38,8 @@ public class Piece : MonoBehaviour
 
         if (isBomb)
         {
-            GetComponent<SpriteRenderer>().sprite = bombSprite;
+            GetComponent<SpriteRenderer>().sprite = explodeBomb;
+            GridMapGenerator.gen.GameOver();
         }
         else
         {

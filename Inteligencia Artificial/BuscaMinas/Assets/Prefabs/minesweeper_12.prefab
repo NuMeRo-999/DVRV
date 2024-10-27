@@ -74,7 +74,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 1390278157, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -147,6 +147,7 @@ MonoBehaviour:
   y: 0
   isBomb: 0
   bombSprite: {fileID: -1573758420, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
+  explodeBomb: {fileID: -1420010391, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
   flagSprite: {fileID: -1304721452, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
   normalPieceSprite: {fileID: 1390278157, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
   numberSprites:
@@ -159,3 +160,5 @@ MonoBehaviour:
   - {fileID: 255288992, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
   - {fileID: 436960405, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
   - {fileID: 690700139, guid: c84b01c342f21db4fa457f4098760d59, type: 3}
+  isFlagged: 0
+  isRevealed: 0
