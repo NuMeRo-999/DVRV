@@ -13,7 +13,7 @@ public class Piece : MonoBehaviour
     public Sprite normalPieceSprite;
     public Sprite[] numberSprites;
 
-    [SerializeField] private bool isFlagged = false;
+    [SerializeField] public bool isFlagged = false;
     [SerializeField] public bool isRevealed = false;
 
     public void OnMouseOver()
@@ -29,6 +29,7 @@ public class Piece : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             ToggleFlag();
+            GridMapGenerator.gen.CheckForWin(); // Verifica si se ha ganado el juego al colocar una bandera
         }
     }
 
@@ -45,6 +46,7 @@ public class Piece : MonoBehaviour
         {
             int bombsAround = GridMapGenerator.gen.GetBombsAround(x, y);
             GetComponent<SpriteRenderer>().sprite = numberSprites[bombsAround];
+            GridMapGenerator.gen.IncrementRevealedPieces(); // Aumenta el contador de casillas reveladas
 
             if (bombsAround == 0)
             {

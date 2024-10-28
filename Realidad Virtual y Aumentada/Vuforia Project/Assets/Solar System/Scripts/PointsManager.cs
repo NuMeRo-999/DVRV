@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PointsManager : MonoBehaviour
 {
     public int points = 0;
     public List<GameObject> planets;
+    public TextMeshProUGUI text;
 
     void Start()
     {
@@ -22,7 +24,7 @@ public class PointsManager : MonoBehaviour
         {
             if (planet.activeInHierarchy)
             {
-                AddPoints(10);
+                //AddPoints(10, );
                 planet.SetActive(false);
                 ActivateRandomPlanet();
                 break;
@@ -30,10 +32,10 @@ public class PointsManager : MonoBehaviour
         }
     }
 
-    void AddPoints(int amount)
+    public void AddPoints(int amount)
     {
         points += amount;
-        Debug.Log("Points: " + points);
+        text.text = "Points: " + points;
     }
 
     void ActivateRandomPlanet()

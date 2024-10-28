@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement; // Para reiniciar la escena
 using UnityEngine.UI;
 
 public class GridMapGenerator : MonoBehaviour
@@ -13,12 +13,19 @@ public class GridMapGenerator : MonoBehaviour
     public int bombCount = 10;
     public GameObject[][] map;
     public GameObject gameOverPanel;
+    public GameObject winPanel;
+    public GameObject RestartButton;
+    public GameObject menuButton;
+
+    private int revealedPieces = 0;
 
     void Start()
     {
         gen = this;
         gameOverPanel.SetActive(false);
-
+        winPanel.SetActive(false);
+        RestartButton.SetActive(false);
+        menuButton.SetActive(false);
         map = new GameObject[width][];
         for (int i = 0; i < width; i++)
         {
@@ -74,7 +81,10 @@ public class GridMapGenerator : MonoBehaviour
     public void GameOver()
     {
         ShowAllBombs();
+        winPanel.SetActive(true);
+        RestartButton.SetActive(true);
         gameOverPanel.SetActive(true);
+        menuButton.SetActive(true);
     }
 
     private void ShowAllBombs()
@@ -84,7 +94,7 @@ public class GridMapGenerator : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 Piece piece = map[i][j].GetComponent<Piece>();
-                if (piece.isBomb && !piece.isRevealed)
+                if (piece.isBomb)
                 {
                     piece.GetComponent<SpriteRenderer>().sprite = piece.bombSprite;
                 }
@@ -92,8 +102,51 @@ public class GridMapGenerator : MonoBehaviour
         }
     }
 
+    public void WinGame()
+    {
+        ShowAllBombs();
+        winPanel.SetActive(true);
+        RestartButton.SetActive(true);
+        gameOverPanel.SetActive(true);
+        menuButton.SetActive(true);
+    }
+
+    public void CheckForWin()
+    {
+        int flagCount = 0;
+        int totalCells = width * height;
+
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                Piece piece = map[i][j].GetComponent<Piece>();
+                if (piece.isBomb && piece.isFlagged)
+                {
+                    flagCount++;
+                }
+            }
+        }
+
+        if (flagCount == bombCount || revealedPieces + bombCount == totalCells)
+        {
+            WinGame();
+        }
+    }
+
+    public void IncrementRevealedPieces()
+    {
+        revealedPieces++;
+        CheckForWin();
+    }
+
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene("Menu");
     }
 }
