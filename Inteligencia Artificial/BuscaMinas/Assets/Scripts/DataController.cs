@@ -1,39 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ControlDatosJuego : MonoBehaviour
 {
+    public static ControlDatosJuego Instance { get; private set; }
 
-    public int width
+    private int _width;
+    private int _height;
+    private int _bombCount;
+
+    public int Width
     {
-        get => width;
-        set => width = value;
+        get => _width;
+        set => _width = value;
     }
 
-    public int heigth
+    public int Height
     {
-        get => heigth;
-        set => heigth = value;
+        get => _height;
+        set => _height = value;
     }
 
-    public int bombCount
+    public int BombCount
     {
-        get => bombCount;
-        set => bombCount = value;
+        get => _bombCount;
+        set => _bombCount = value;
     }
 
     private void Awake()
     {
-        int numInstancias = FindObjectsOfType<ControlDatosJuego>().Length;
-        if (numInstancias > 1)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
         }
         else
         {
+            Instance = this;
             DontDestroyOnLoad(gameObject);
         }
     }
-
 }

@@ -8,25 +8,32 @@ public class GridMapGenerator : MonoBehaviour
 {
     public static GridMapGenerator gen;
     public GameObject gridPiece;
-    public int width = 10;
-    public int height = 10;
-    public int bombCount = 10;
     public GameObject[][] map;
     public GameObject gameOverPanel;
     public GameObject winPanel;
     public GameObject RestartButton;
     public GameObject menuButton;
 
+    public int width;
+    public int height;
+    private int bombCount;
     private int revealedPieces = 0;
 
     void Start()
     {
         gen = this;
+
+        width = ControlDatosJuego.Instance.Width;
+        height = ControlDatosJuego.Instance.Height;
+        bombCount = ControlDatosJuego.Instance.BombCount;
+
         gameOverPanel.SetActive(false);
         winPanel.SetActive(false);
         RestartButton.SetActive(false);
         menuButton.SetActive(false);
+
         map = new GameObject[width][];
+
         for (int i = 0; i < width; i++)
         {
             map[i] = new GameObject[height];
@@ -81,7 +88,6 @@ public class GridMapGenerator : MonoBehaviour
     public void GameOver()
     {
         ShowAllBombs();
-        winPanel.SetActive(true);
         RestartButton.SetActive(true);
         gameOverPanel.SetActive(true);
         menuButton.SetActive(true);
@@ -107,7 +113,6 @@ public class GridMapGenerator : MonoBehaviour
         ShowAllBombs();
         winPanel.SetActive(true);
         RestartButton.SetActive(true);
-        gameOverPanel.SetActive(true);
         menuButton.SetActive(true);
     }
 
@@ -147,6 +152,7 @@ public class GridMapGenerator : MonoBehaviour
 
     public void LoadMenu()
     {
+        Debug.Log("Cargando menú");
         SceneManager.LoadScene("Menu");
     }
 }

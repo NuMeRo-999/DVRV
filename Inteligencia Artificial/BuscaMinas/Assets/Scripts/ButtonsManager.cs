@@ -1,44 +1,30 @@
-//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-//public class ButtonsManager : MonoBehaviour
-//{
-//    public GameObject facilButton;
-//    public GameObject medioButton;
-//    public GameObject dificilButton;
-//    //public DataController dataController;
+public class ButtonsManager : MonoBehaviour
+{
+    public void FacilButton()
+    {
+        Debug.Log("FacilButton");
+        ControlDatosJuego.Instance.Width = 8;
+        ControlDatosJuego.Instance.Height = 8;
+        ControlDatosJuego.Instance.BombCount = 10;
+        SceneManager.LoadScene("Juego");
+    }
 
-//    public void FacilButton()
-//    {
-//        dataController.width = 8;
-//        dataController.height = 8;
-//        dataController.bombCount = 10;
-//        dataController.Start();
-//        facilButton.SetActive(false);
-//        medioButton.SetActive(false);
-//        dificilButton.SetActive(false);
-//    }
+    public void MedioButton()
+    {
+        ControlDatosJuego.Instance.Width = 16;
+        ControlDatosJuego.Instance.Height = 16;
+        ControlDatosJuego.Instance.BombCount = 40;
+        SceneManager.LoadScene("Juego");
+    }
 
-//    public void MedioButton()
-//    {
-//        dataController.width = 16;
-//        dataController.height = 16;
-//        dataController.bombCount = 40;
-//        dataController.Start();
-//        facilButton.SetActive(false);
-//        medioButton.SetActive(false);
-//        dificilButton.SetActive(false);
-//    }
-
-//    public void DificilButton()
-//    {
-//        dataController.width = 16;
-//        dataController.height = 30;
-//        dataController.bombCount = 99;
-//        dataController.Start();
-//        facilButton.SetActive(false);
-//        medioButton.SetActive(false);
-//        dificilButton.SetActive(false);
-//    }
-//}
+    public void DificilButton()
+    {
+        ControlDatosJuego.Instance.Width = 30;
+        ControlDatosJuego.Instance.Height = 30;
+        ControlDatosJuego.Instance.BombCount = 99;
+        SceneManager.LoadScene("Juego");
+    }
+}
