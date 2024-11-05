@@ -9,20 +9,18 @@ public class PointsManager : MonoBehaviour
     public List<GameObject> planets;
     public TextMeshProUGUI Pointstext;
     public TextMeshProUGUI PlanetText;
-    //public Timer timer;
-
 
     public float countdownTime;
     public TextMeshProUGUI timerText;
     [SerializeField] public float currentTime;
 
+    private int lastPlanetIndex = -1;
+
     void Start()
     {
         currentTime = countdownTime;
 
-        //timer = new Timer();
         GetRandomPlanet();
-        //Debug.Log(timer.currentTime);
     }
 
     void Update()
@@ -54,9 +52,12 @@ public class PointsManager : MonoBehaviour
         {
             AddPoints(10);
             GetRandomPlanet();
+            currentTime = countdownTime;
         }
         else
         {
+            timerText.text = "¡Incorrecto!";
+            GetRandomPlanet();
         }
     }
 
@@ -68,9 +69,16 @@ public class PointsManager : MonoBehaviour
 
     void GetRandomPlanet()
     {
-        int randomIndex = Random.Range(0, planets.Count);
+        int randomIndex;
+
+        do
+        {
+            randomIndex = Random.Range(0, planets.Count);
+        } while (randomIndex == lastPlanetIndex);
+
+        lastPlanetIndex = randomIndex;
+
         GameObject selectedPlanet = planets[randomIndex];
-        selectedPlanet.SetActive(true);
         PlanetText.text = selectedPlanet.name;
     }
 }
