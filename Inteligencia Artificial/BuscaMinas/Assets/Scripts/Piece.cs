@@ -29,7 +29,7 @@ public class Piece : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             ToggleFlag();
-            GridMapGenerator.gen.CheckForWin(); // Verifica si se ha ganado el juego al colocar una bandera
+            GridMapGenerator.gen.CheckForWin();
         }
     }
 
@@ -46,7 +46,7 @@ public class Piece : MonoBehaviour
         {
             int bombsAround = GridMapGenerator.gen.GetBombsAround(x, y);
             GetComponent<SpriteRenderer>().sprite = numberSprites[bombsAround];
-            GridMapGenerator.gen.IncrementRevealedPieces(); // Aumenta el contador de casillas reveladas
+            GridMapGenerator.gen.IncrementRevealedPieces();
 
             if (bombsAround == 0)
             {
