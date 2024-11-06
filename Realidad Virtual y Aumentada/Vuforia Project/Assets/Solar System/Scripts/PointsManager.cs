@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Vuforia;
+using System.IO;
 
 public class PointsManager : MonoBehaviour
 {
@@ -23,6 +25,7 @@ public class PointsManager : MonoBehaviour
         GetRandomPlanet();
     }
 
+   
     void Update()
     {
 
@@ -81,4 +84,8 @@ public class PointsManager : MonoBehaviour
         GameObject selectedPlanet = planets[randomIndex];
         PlanetText.text = selectedPlanet.name;
     }
+
+    
+  
+    
 }
