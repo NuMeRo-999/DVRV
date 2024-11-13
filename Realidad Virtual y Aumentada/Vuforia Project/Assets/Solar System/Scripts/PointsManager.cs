@@ -37,7 +37,7 @@ public class PointsManager : MonoBehaviour
         }
         else
         {
-            timerText.text = "¡Tiempo terminado!";
+            timerText.text = "ï¿½Tiempo terminado!";
         }
 
         if (currentTime <= 0)
@@ -59,7 +59,7 @@ public class PointsManager : MonoBehaviour
         }
         else
         {
-            timerText.text = "¡Incorrecto!";
+            timerText.text = "ï¿½Incorrecto!";
             GetRandomPlanet();
         }
     }
@@ -70,7 +70,7 @@ public class PointsManager : MonoBehaviour
         Pointstext.text = "Puntos: " + points;
     }
 
-    void GetRandomPlanet()
+    public void GetRandomPlanet()
     {
         int randomIndex;
 
