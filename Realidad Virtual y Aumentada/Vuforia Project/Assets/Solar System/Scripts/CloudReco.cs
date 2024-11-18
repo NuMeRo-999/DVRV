@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Vuforia;
-using System.Collections;
 
 public class CloudReco : MonoBehaviour
 {
