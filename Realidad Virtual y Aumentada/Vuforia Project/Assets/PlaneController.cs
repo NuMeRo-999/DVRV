@@ -1,169 +1,70 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
-public class PlaneController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class AirplaneController : MonoBehaviour
 {
-    public Button accelerateButton;
-    public Button brakeButton;
-    public Button upButton;
-    public Button downButton;
-    public Button leftButton;
-    public Button rightButton;
+    public float maxSpeed = 60f; // Velocidad máxima
+    public float acceleration = 40f; // Incremento de velocidad por segundo
+    public float deceleration = 5f; // Reducción de velocidad por segundo
+    public float rotationSpeed = 500f; // Velocidad de rotación
+    public float rotationSmoothing = 5f; // Suavizado de rotación
 
-    private float speed = 0f;
-    private float maxSpeed = 1f; 
-    private float acceleration = 0.5f;
-    private float rotationSpeed = 20f;
+    private float currentSpeed = 0f; // Velocidad actual del avión
+    private Quaternion targetRotation; // Rotación deseada
+    private Animator animator; // Referencia al componente Animator
 
-    private Animator animator;
-
-    private bool isAccelerating = false;
-    private bool isBraking = false;
-    private bool isMovingUp = false;
-    private bool isMovingDown = false;
-    private bool isMovingLeft = false;
-    private bool isMovingRight = false;
+    // Botones
+    public Button btnAccelerate;
+    public Button btnBrake;
+    public Button btnUp;
+    public Button btnDown;
+    public Button btnLeft;
+    public Button btnRight;
 
     void Start()
     {
-        accelerateButton.onClick.AddListener(() => isAccelerating = true);
-        brakeButton.onClick.AddListener(() => isBraking = true);
-        upButton.onClick.AddListener(() => isMovingUp = true);
-        downButton.onClick.AddListener(() => isMovingDown = true);
-        leftButton.onClick.AddListener(() => isMovingLeft = true);
-        rightButton.onClick.AddListener(() => isMovingRight = true);
+        // Asignar eventos a los botones
+        btnAccelerate.onClick.AddListener(() => ModifySpeed(acceleration));
+        btnBrake.onClick.AddListener(() => ModifySpeed(-deceleration));
+        btnUp.onClick.AddListener(() => AddRotation(Vector3.left)); // Subir (rotar hacia atrás)
+        btnDown.onClick.AddListener(() => AddRotation(Vector3.right)); // Bajar (rotar hacia adelante)
+        btnLeft.onClick.AddListener(() => AddRotation(Vector3.down)); // Girar a la izquierda
+        btnRight.onClick.AddListener(() => AddRotation(Vector3.up)); // Girar a la derecha
+
+        // Obtener el componente Animator
+        animator = GetComponent<Animator>();
+
+        // Inicializar la rotación deseada como la actual
+        targetRotation = transform.rotation;
     }
 
     void Update()
     {
-        if (isAccelerating)
-        {
-            Accelerate();
-        }
-        if (isBraking)
-        {
-            Brake();
-        }
-        if (isMovingUp)
-        {
-            MoveUp();
-        }
-        if (isMovingDown)
-        {
-            MoveDown();
-        }
-        if (isMovingLeft)
-        {
-            MoveLeft();
-        }
-        if (isMovingRight)
-        {
-            MoveRight();
-        }
+        // Mover el avión hacia adelante según la velocidad actual
+        transform.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
 
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
-        if (speed > 0)
+        // Interpolación hacia la rotación deseada
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSmoothing * Time.deltaTime);
+
+        // Activar o desactivar la animación según la velocidad
+        if (animator != null)
         {
-            if (animator != null)
-            {
-                animator.SetBool("isMoving", true);
-            }
-        }
-        else
-        {
-            if (animator != null)
-            {
-                animator.SetBool("isMoving", false);
-            }
+            animator.SetBool("isMoving", currentSpeed > 0);
         }
     }
 
-    void Accelerate()
+    void ModifySpeed(float delta)
     {
-        speed = Mathf.Clamp(speed + acceleration * Time.deltaTime, 0, maxSpeed);
+        // Incrementar o reducir la velocidad
+        currentSpeed += delta * Time.deltaTime;
+
+        // Limitar la velocidad dentro del rango permitido
+        currentSpeed = Mathf.Clamp(currentSpeed, 0, maxSpeed);
     }
 
-    void Brake()
+    void AddRotation(Vector3 direction)
     {
-        speed = Mathf.Clamp(speed - acceleration * Time.deltaTime, 0, maxSpeed);
-    }
-
-    void MoveUp()
-    {
-        transform.Rotate(Vector3.right, -rotationSpeed * Time.deltaTime);
-    }
-
-    void MoveDown()
-    {
-        transform.Rotate(Vector3.right, rotationSpeed * Time.deltaTime);
-    }
-
-    void MoveLeft()
-    {
-        transform.Rotate(Vector3.up, -rotationSpeed * Time.deltaTime);
-    }
-
-    void MoveRight()
-    {
-        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        if (eventData.pointerPress == accelerateButton.gameObject)
-        {
-            isAccelerating = true;
-        }
-        else if (eventData.pointerPress == brakeButton.gameObject)
-        {
-            isBraking = true;
-        }
-        else if (eventData.pointerPress == upButton.gameObject)
-        {
-            isMovingUp = true;
-        }
-        else if (eventData.pointerPress == downButton.gameObject)
-        {
-            isMovingDown = true;
-        }
-        else if (eventData.pointerPress == leftButton.gameObject)
-        {
-            isMovingLeft = true;
-        }
-        else if (eventData.pointerPress == rightButton.gameObject)
-        {
-            isMovingRight = true;
-        }
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        if (eventData.pointerPress == accelerateButton.gameObject)
-        {
-            isAccelerating = false;
-        }
-        else if (eventData.pointerPress == brakeButton.gameObject)
-        {
-            isBraking = false;
-        }
-        else if (eventData.pointerPress == upButton.gameObject)
-        {
-            isMovingUp = false;
-        }
-        else if (eventData.pointerPress == downButton.gameObject)
-        {
-            isMovingDown = false;
-        }
-        else if (eventData.pointerPress == leftButton.gameObject)
-        {
-            isMovingLeft = false;
-        }
-        else if (eventData.pointerPress == rightButton.gameObject)
-        {
-            isMovingRight = false;
-        }
+        // Calcular la nueva rotación objetivo
+        targetRotation *= Quaternion.Euler(direction * rotationSpeed * Time.deltaTime);
     }
 }
