@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 1.5f;
 
     [Header("Look Settings")]
-    public float lookSensitivity = 1f; // Ajusta la sensibilidad del ratón
+    public float lookSensitivity = 1f;
 
     private CharacterController characterController;
 
@@ -17,8 +17,10 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 lookInput;
     private Vector3 velocity;
     private bool isGrounded;
+    private bool isSliding;
+    private Vector3 hitNormal;
 
-    private float xRotation = 0f; // Rotación acumulada en el eje X (para la cámara)
+    private float xRotation = 0f;
 
     void Awake()
     {
@@ -29,49 +31,71 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        CheckSlope();
         MovePlayer();
         RotatePlayer();
     }
 
     private void MovePlayer()
     {
-        // Verificar si está en el suelo
         isGrounded = characterController.isGrounded;
+
         if (isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; // Mantener al jugador pegado al suelo
+            velocity.y = -2f;
         }
 
-        // Movimiento horizontal
-        Vector3 move = new Vector3(inputDirection.x, 0, inputDirection.y);
-        move = transform.TransformDirection(move); // Convertir a espacio mundial
-        characterController.Move(move * moveSpeed * Time.deltaTime);
+        if (isSliding)
+        {
+            SlideDown();
+        }
+        else
+        {
+            Vector3 move = new Vector3(inputDirection.x, 0, inputDirection.y);
+            move = transform.TransformDirection(move);
+            characterController.Move(move * moveSpeed * Time.deltaTime);
+        }
 
-        // Aplicar gravedad
         velocity.y += gravity * Time.deltaTime;
         characterController.Move(velocity * Time.deltaTime);
     }
 
     private void RotatePlayer()
     {
-        // Rotación horizontal del jugador (eje Y)
         transform.Rotate(0, lookInput.x * lookSensitivity * Time.deltaTime, 0);
 
-        // Rotación vertical (eje X, generalmente para la cámara)
         xRotation -= lookInput.y * lookSensitivity * Time.deltaTime;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // Limitar ángulo vertical
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
         Camera.main.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+    }
+
+    private void CheckSlope()
+    {
+        // Considerar solo pendientes pronunciadas para el deslizamiento
+        float slopeAngle = Vector3.Angle(Vector3.up, hitNormal);
+        isSliding = isGrounded && slopeAngle > characterController.slopeLimit && slopeAngle < 89f; // Ignorar paredes verticales para poder subir escaleras
+    }
+
+
+    private void SlideDown()
+    {
+        // Dirección del deslizamiento
+        Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, hitNormal);
+        characterController.Move(slideDirection * moveSpeed * Time.deltaTime);
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        hitNormal = hit.normal;
     }
 
     public void OnMove(InputValue value)
     {
-        // Guardar la dirección del movimiento
         inputDirection = value.Get<Vector2>();
     }
 
     public void OnJump(InputValue value)
     {
-        // Manejar el salto
         if (isGrounded && value.isPressed)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -80,7 +104,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnLook(InputValue value)
     {
-        // Guardar la entrada de mirar alrededor
         lookInput = value.Get<Vector2>();
     }
 }
