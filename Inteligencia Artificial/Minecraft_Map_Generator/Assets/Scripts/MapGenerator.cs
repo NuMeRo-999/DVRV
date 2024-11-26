@@ -10,7 +10,7 @@ public class MapGenerator : MonoBehaviour
 
     [Range(0, 100)] public float treeProbability = 0.1f;
 
-    public GameObject[] blocks; // 0: Grass, 1: Dirt, 2: Stone, 3: Bedrock, 4: Trunk, 5: Leaves
+    public GameObject[] blocks;
 
     void Start()
     {
@@ -29,27 +29,25 @@ public class MapGenerator : MonoBehaviour
                 {
                     GameObject blockToInstantiate;
 
-                    // Determinar tipo de bloque
                     if (y == localHeight - 1)
                     {
-                        blockToInstantiate = blocks[0]; // Grass
+                        blockToInstantiate = blocks[0];
                     }
                     else if (y >= localHeight - 4)
                     {
-                        blockToInstantiate = blocks[1]; // Dirt
+                        blockToInstantiate = blocks[1];
                     }
                     else if (y > 0)
                     {
-                        blockToInstantiate = blocks[2]; // Stone
+                        blockToInstantiate = blocks[2];
                     }
                     else
                     {
-                        blockToInstantiate = blocks[3]; // Bedrock
+                        blockToInstantiate = blocks[3];
                     }
 
                     Instantiate(blockToInstantiate, new Vector3(x, y, z), Quaternion.identity, transform);
 
-                    // Generar árboles en bloques de grass
                     if (blockToInstantiate == blocks[0] && Random.Range(0, 100) < treeProbability)
                     {
                         CreateTree(new Vector3(x, y, z));
@@ -62,8 +60,8 @@ public class MapGenerator : MonoBehaviour
     public void CreateTree(Vector3 position)
     {
         // Crear tronco del árbol
-        int trunkHeight = Random.Range(3, 6); // Altura aleatoria para el tronco
-        for (int i = 1; i <= trunkHeight; i++)
+        int logHeight = Random.Range(3, 6);
+        for (int i = 1; i <= logHeight; i++)
         {
             Instantiate(blocks[4], position + Vector3.up * i, Quaternion.identity, transform);
         }
@@ -71,13 +69,13 @@ public class MapGenerator : MonoBehaviour
         // Crear hojas
         Vector3[] leafOffsets = new Vector3[]
         {
-            new Vector3(1, trunkHeight - 1, 0), new Vector3(-1, trunkHeight - 1, 0),
-            new Vector3(0, trunkHeight - 1, 1), new Vector3(0, trunkHeight - 1, -1),
-            new Vector3(1, trunkHeight, 0), new Vector3(-1, trunkHeight, 0),
-            new Vector3(0, trunkHeight, 1), new Vector3(0, trunkHeight, -1),
-            new Vector3(0, trunkHeight + 1, 0), // Parte superior de las hojas
-            new Vector3(1, trunkHeight, 1), new Vector3(-1, trunkHeight, -1),
-            new Vector3(1, trunkHeight, -1), new Vector3(-1, trunkHeight, 1)
+            new Vector3(1, logHeight - 1, 0), new Vector3(-1, logHeight - 1, 0),
+            new Vector3(0, logHeight - 1, 1), new Vector3(0, logHeight - 1, -1),
+            new Vector3(1, logHeight, 0), new Vector3(-1, logHeight, 0),
+            new Vector3(0, logHeight, 1), new Vector3(0, logHeight, -1),
+            new Vector3(0, logHeight + 1, 0), // Parte superior de las hojas
+            new Vector3(1, logHeight, 1), new Vector3(-1, logHeight, -1),
+            new Vector3(1, logHeight, -1), new Vector3(-1, logHeight, 1)
         };
 
         foreach (Vector3 offset in leafOffsets)
