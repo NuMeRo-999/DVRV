@@ -23,11 +23,6 @@ public class Block : MonoBehaviour
             GetComponent<Collider>().enabled = false;
         }
 
-        // if(Physics.Raycast(transform.position, Vector3.up))
-        // {
-        //     GetComponent<MeshRenderer>().enabled = false;
-        //     GetComponent<Collider>().enabled = false;
-        // }
     }
 
     void Update()
