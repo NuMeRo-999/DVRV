@@ -16,11 +16,12 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 inputDirection;
     private Vector2 lookInput;
     private Vector3 velocity;
-    private bool isGrounded;
-    private bool isSliding;
+    public bool isGrounded;
+    public bool isSliding;
     private Vector3 hitNormal;
 
     private float xRotation = 0f;
+    public Platform platform;
 
     void Awake()
     {
@@ -87,6 +88,13 @@ public class PlayerMovement : MonoBehaviour
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         hitNormal = hit.normal;
+
+        if (hit.collider.tag == "platform")
+        {
+            platform = hit.collider.GetComponent<Platform>();
+            transform.position = Vector3.MoveTowards(transform.position, platform.platformPositions[platform.GetNextPosition()].position, 0.1f);
+            transform.position += platform.speed * Time.deltaTime * Vector3.up;
+        }
     }
 
     public void OnMove(InputValue value)
