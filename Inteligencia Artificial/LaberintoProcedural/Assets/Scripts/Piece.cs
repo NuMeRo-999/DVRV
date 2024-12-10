@@ -21,8 +21,6 @@ public class Piece : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 raycastOrigin = transform.position + new Vector3(0, 3, 0);
-
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + transform.right * -6);
         Gizmos.DrawLine(transform.position, transform.position + transform.right * 6);

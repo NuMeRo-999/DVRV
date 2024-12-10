@@ -15,13 +15,8 @@ public class MapGenerator : MonoBehaviour
         gen = this;
         map = new GameObject[xMax, zMax];
         // StartCoroutine("GenMapBasic");
-        StartCoroutine(GenMapMedium(0, 0));
-        // GenerateFirstFloor();
-    }
-
-    void Update()
-    {
-
+        // StartCoroutine(GenMapMedium(0, 0));
+        GenerateFirstFloor();
     }
 
     public IEnumerator GenMapBasic()
