@@ -11,9 +11,9 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
+        transform.Rotate(0, 0, 360 * Time.deltaTime);
         Destroy(gameObject, 3f);
     }
-
 
     void OnCollisionEnter(Collision collision)
     {

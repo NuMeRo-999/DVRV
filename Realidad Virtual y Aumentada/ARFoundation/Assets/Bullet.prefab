@@ -149,4 +149,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c78dc04155b854795d5d1f45578338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burstEffect: {fileID: 2268175498125314092, guid: 16d004371b680204db6e2f9c00f1eb1e, type: 3}
+  FoodParticleSystem: {fileID: 2268175498125314092, guid: 16d004371b680204db6e2f9c00f1eb1e, type: 3}

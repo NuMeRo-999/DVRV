@@ -1115,9 +1115,11 @@ MonoBehaviour:
   - {fileID: 6639245508002578564, guid: 68cb6e858d2953e4c8693b634a033386, type: 3}
   - {fileID: 7151594660703261423, guid: 3a245daa6cb83334d8a55a5e90125b88, type: 3}
   - {fileID: 4850541254266803216, guid: 1d08eb9304ef2d247b4c953f91c9ca75, type: 3}
-  bullet: {fileID: 4189147173625192492, guid: 89be9368191eb31499ce594c8ca8c171, type: 3}
+  bullet: {fileID: 8193054380588629185, guid: b5677bacf72338443a6f114814eb0778, type: 3}
   ARCamera: {fileID: 253825538}
   speed: 2000
+  arPlaneManager: {fileID: 440745296}
+  alturaPlanoDetectado: 0
 --- !u!4 &1996198833
 Transform:
   m_ObjectHideFlags: 0
