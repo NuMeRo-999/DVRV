@@ -952,6 +952,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1996198831}
+        m_TargetAssemblyTypeName: FoodNinja, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1610503097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1165,6 +1177,9 @@ MonoBehaviour:
   speed: 2000
   arPlaneManager: {fileID: 440745296}
   alturaPlanoDetectado: 0
+  buttonSprite: {fileID: 0}
+  buttonSpritePressed: {fileID: 0}
+  Button: {fileID: 0}
 --- !u!4 &1996198833
 Transform:
   m_ObjectHideFlags: 0
