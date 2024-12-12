@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FoodNinja : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class FoodNinja : MonoBehaviour
     private List<ARPlane> planes = new List<ARPlane>();
     private bool empezarGenerar = false;
     public float alturaPlanoDetectado;
+
+    public Sprite buttonSprite;
+    public Sprite buttonSpritePressed;
+    public Image Button;
 
     void Start()
     {
@@ -83,5 +88,10 @@ public class FoodNinja : MonoBehaviour
         }
 
         empezarGenerar = true;
+    }
+
+    public void changeButtonSprite()
+    {
+        
     }
 }
