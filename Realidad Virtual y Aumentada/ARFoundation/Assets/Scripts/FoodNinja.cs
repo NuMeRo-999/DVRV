@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class FoodNinja : MonoBehaviour
 {
@@ -20,15 +21,23 @@ public class FoodNinja : MonoBehaviour
     public Sprite buttonSpritePressed;
     public Image Button;
 
+    public GameObject[] healthUI;
+    public Sprite emptyHeart;
+    private int health = 3;
+
+    private int points = 0;
+    public TextMeshProUGUI pointsUI;
+
     void Start()
     {
         InvokeRepeating("SpawnFood", 1f, 2f);
+        pointsUI.text = "Puntos: " + points.ToString();
     }
 
     void Update()
     {
       
-            Debug.Log(" alturaPlanoDetectado: " + alturaPlanoDetectado);
+        Debug.Log(" alturaPlanoDetectado: " + alturaPlanoDetectado);
         if (empezarGenerar)
         {
             GameObject[] food = GameObject.FindGameObjectsWithTag("Food");
@@ -90,8 +99,25 @@ public class FoodNinja : MonoBehaviour
         empezarGenerar = true;
     }
 
-    public void changeButtonSprite()
+    public void takeDamage()
     {
-        
+        if (health > 0)
+        {
+            health -= 1;
+            healthUI[health].GetComponent<Image>().sprite = emptyHeart;
+        }
     }
+
+    public void addPoints(int points)
+    {
+        this.points += points;
+        pointsUI.text = "Puntos: " + points.ToString();
+    }
+
+    public void lostPoints(int points)
+    {
+        this.points -= points;
+        pointsUI.text = "Puntos: " + points.ToString();
+    }
+    
 }

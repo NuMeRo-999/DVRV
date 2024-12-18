@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Food
   - Bullet
+  - Bomb
   layers:
   - Default
   - TransparentFX
