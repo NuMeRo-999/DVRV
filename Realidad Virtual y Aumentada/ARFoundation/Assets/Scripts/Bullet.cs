@@ -4,11 +4,13 @@ public class Bullet : MonoBehaviour
 {
     public ParticleSystem FoodParticleSystem;
     public ParticleSystem BombParticleSystem;
-    public FoodNinja foodNinja;
+
+    [SerializeField] private FoodNinja foodNinja;
+    
 
     void Start()
     {
-        foodNinja = GameObject.Find("FoodNinja").GetComponent<FoodNinja>();
+        
     }
     void Update()
     {
@@ -71,6 +73,7 @@ public class Bullet : MonoBehaviour
         Debug.Log("Nombre: " + collision.gameObject.name);
         if (collision.gameObject.name == "Bomb(Clone)")
         {
+            Debug.Log("colision Bomb");
             foodNinja.takeDamage();
             BombParticleSystem.Play();
         }

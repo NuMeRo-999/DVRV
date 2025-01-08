@@ -162,6 +162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FoodParticleSystem: {fileID: 19814690, guid: cd4d7020429cde74db076ffa72495419, type: 3}
   BombParticleSystem: {fileID: 19821056, guid: 079954accd64b32419ec069129c81273, type: 3}
+  foodNinja: {fileID: 343709089628919528, guid: f59b90873e213944f8c6b532cfb2a7dc, type: 3}
 --- !u!135 &3777268805597005981
 SphereCollider:
   m_ObjectHideFlags: 0
