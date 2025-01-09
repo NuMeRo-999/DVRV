@@ -116,7 +116,7 @@ public class FoodNinja : MonoBehaviour
 
     private void Die()
     {
-
+        
     }
 
     public void addPoints(int points)
