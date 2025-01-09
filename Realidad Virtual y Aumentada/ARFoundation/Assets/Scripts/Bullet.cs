@@ -80,6 +80,7 @@ public class Bullet : MonoBehaviour
         else
         {
             FoodParticleSystem.Play();
+            Debug.Log("colision food");
             foodNinja.addPoints(10);
         }
 

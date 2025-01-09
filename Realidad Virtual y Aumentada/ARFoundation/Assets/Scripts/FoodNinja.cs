@@ -64,6 +64,7 @@ public class FoodNinja : MonoBehaviour
     public void Shoot()
     {
         GameObject bullet = Instantiate(this.bullet, ARCamera.transform.position, Quaternion.Euler(ARCamera.transform.rotation.eulerAngles.x, ARCamera.transform.rotation.eulerAngles.y + 90, ARCamera.transform.rotation.eulerAngles.z));
+        bullet.SetActive(true);
         bullet.GetComponent<Rigidbody>().AddForce(ARCamera.transform.forward * speed);
     }
     
@@ -106,6 +107,16 @@ public class FoodNinja : MonoBehaviour
             health -= 1;
             healthUI[health].GetComponent<Image>().sprite = emptyHeart;
         }
+
+        if (health == 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+
     }
 
     public void addPoints(int points)
