@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 using System.Collections;
 using Unity.VisualScripting;
+=======
+>>>>>>> 665d1d49142c0b675bea71f6d5e3b57fd729884c
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,6 +10,7 @@ public class NPC_Behaviour : MonoBehaviour
 {
 
     [SerializeField] private Vector3 destination;
+<<<<<<< HEAD
     [SerializeField] private Transform path;
     [SerializeField] private int childrenIndex = 0;
     [SerializeField] private Vector3 min, max;
@@ -27,6 +31,12 @@ public class NPC_Behaviour : MonoBehaviour
         // StartCoroutine(FollowPlayer());
         StartCoroutine(RangeDetection());
         StartCoroutine(AngleVisionDetection());
+=======
+
+    void Start()
+    {
+        GetComponent<NavMeshAgent>().SetDestination(destination);
+>>>>>>> 665d1d49142c0b675bea71f6d5e3b57fd729884c
     }
 
     void Update()
@@ -41,6 +51,7 @@ public class NPC_Behaviour : MonoBehaviour
             }
             GetComponent<NavMeshAgent>().SetDestination(destination);
         }
+<<<<<<< HEAD
 
         // if (!isPlayerTracking && !isWaiting && Vector3.Distance(transform.position, destination) < 1f)
         // {
@@ -152,4 +163,7 @@ public class NPC_Behaviour : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + rightBoundary);
     }
 
+=======
+    }
+>>>>>>> 665d1d49142c0b675bea71f6d5e3b57fd729884c
 }
