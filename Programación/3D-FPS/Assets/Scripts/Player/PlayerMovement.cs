@@ -1,58 +1,136 @@
-using Unity.VisualScripting;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    public float moveSpeed = 5f;
-    public float lookSensitivity = 2f;
-    private Rigidbody rb;
+    [Header("Movement")]
+    public float moveSpeed = 6f;
+    public float movementMultiplier = 10f;
+    float playerHeight = 2f;
+    [SerializeField] float airMultiplier = 0.4f;
+    [SerializeField] Transform head;
+    [SerializeField] Transform weapon;
 
-    [Header("Camera and Arms Settings")]
-    public Transform playerCamera;
-    public float cameraPitch = 0f;
+    [Header("Jumping")]
+    [SerializeField] float jumpForce = 5f;
 
+    [Header("Sprinting")]
+    [SerializeField] float walkSpeed = 4f;
+    [SerializeField] float runSpeed = 6f;
+    [SerializeField] float acceleration = 10f;
+    private bool isSprinting = false;
+
+    [Header("Crouching and Sliding")]
+    [SerializeField] float crouchSpeed = 3f;
+    [SerializeField] float slideSpeed = 8f;
+    [SerializeField] float crouchHeight = 1f;
+    [SerializeField] float slideDuration = 1f;
+    [SerializeField] CapsuleCollider playerCollider;
+
+    [Header("Drag")]
+    float groundDrag = 6f;
+    float airDrag = 2f;
+
+    [Header("Ground Detection")]
+    [SerializeField] LayerMask groundMask;
+    public bool isGrounded;
+    float groundDistance = 0.4f;
+
+    [Header("AirDash")]
+    public float dashForce = 10f;
+    public float dashCounter = 1f;
+
+    [Header("Double Jump")]
+    public bool canDoubleJump = true;
+    public float jumpCounter = 1f;
+
+    public float gravity = -15f;
+    public ConstantForce cf;
+
+    private WallRun wallRun;
     private Vector2 movementInput;
     private Vector2 lookInput;
 
-    void Start()
+    Vector3 moveDirection;
+    Vector3 slopeMoveDirection;
+
+    Rigidbody rb;
+    RaycastHit slopeHit;
+
+    public bool isCrouching = false;
+    private bool isSliding = false;
+    private float originalHeight;
+
+    [SerializeField] private CinemachineCamera cinemachineCam;
+
+    private void Start()
     {
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
+        cf = GetComponent<ConstantForce>();
+        wallRun = GetComponent<WallRun>();
+
+        originalHeight = playerHeight;
+
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        if (rb == null)
-            rb = GetComponent<Rigidbody>();
+        Cursor.visible = false;    
     }
 
-    void Update()
+    private void Update()
     {
-        // HandleLook();
+        isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, 1, 0), groundDistance, groundMask);
+
+        if (!isGrounded && !wallRun.isWallRunning)
+        {
+            cf.force = new Vector3(0, gravity, 0);
+        }
+        else
+        {
+            cf.force = new Vector3(0, 0, 0);
+
+            if (isGrounded)
+            {
+                jumpCounter = 1f;
+                dashCounter = 1f;
+            }
+        }
+
+        slopeMoveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal);
+
+        ControlDrag();
+        ControlSpeed();
+
+        // Alinear el jugador con la cámara
     }
 
-    private void FixedUpdate()
+    void AlignWithCamera()
     {
-        HandleMovement();
+        if (cinemachineCam == null) return;
+
+        Vector3 cameraForward = cinemachineCam.transform.forward;
+        cameraForward.y = 0;
+        transform.rotation = Quaternion.LookRotation(cameraForward);
+
+        if (weapon != null)
+        {
+            weapon.rotation = cinemachineCam.transform.rotation * Quaternion.Euler(0, 180, 0);
+
+            float cameraPitch = cinemachineCam.State.RawOrientation.eulerAngles.x;
+            if (cameraPitch > 180f) cameraPitch -= 360f;
+            cameraPitch = Mathf.Clamp(cameraPitch, -70f, 70f);
+
+            float verticalOffset = Mathf.Lerp(-0.3f, 0.3f, (cameraPitch + 70f) / 140f); // Mapear de -70° a 70°
+
+            // Ajustar la posición del arma RELATIVA a la cámara (siempre a la derecha del jugador)
+            weapon.position = head.position
+                + cinemachineCam.transform.forward * 1f
+                + cinemachineCam.transform.right * 0.4f
+                + Vector3.up * (verticalOffset - 0.5f);
+        }
     }
-
-    private void HandleMovement()
-    {
-        Vector3 moveDirection = transform.forward * movementInput.y + transform.right * movementInput.x;
-        moveDirection.Normalize();
-
-        Vector3 moveVelocity = moveDirection * moveSpeed;
-        rb.linearVelocity = new Vector3(moveVelocity.x, rb.linearVelocity.y, moveVelocity.z);
-    }
-
-    // private void HandleLook()
-    // {
-    //     transform.Rotate(Vector3.up * lookInput.x * lookSensitivity);
-
-    //     cameraPitch -= lookInput.y * lookSensitivity;
-    //     cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
-    //     playerCamera.localRotation = Quaternion.Euler(cameraPitch, 0f, 0f);
-
-    // }
 
     public void OnMove(InputValue value)
     {
@@ -64,4 +142,103 @@ public class PlayerMovement : MonoBehaviour
         lookInput = value.Get<Vector2>();
     }
 
+    public void OnJump(InputValue value)
+    {
+        if (isGrounded && !isCrouching)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+        else if (!isGrounded && jumpCounter != 0 && !wallRun.isWallRunning)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpCounter--;
+        }
+    }
+
+    void ControlDrag()
+    {
+        rb.linearDamping = isGrounded ? groundDrag : airDrag;
+    }
+
+    void ControlSpeed()
+    {
+        float targetSpeed = isSliding ? slideSpeed :
+                            isCrouching ? crouchSpeed :
+                            isSprinting ? runSpeed : walkSpeed;
+
+        moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, acceleration * Time.deltaTime);
+    }
+
+
+    void HandleCrouchAndSlide()
+    {
+        if (isCrouching && !Physics.Raycast(transform.position, Vector3.up, 2f))
+        {
+            playerHeight = originalHeight;
+            playerCollider.height = originalHeight;
+        }
+    }
+
+    public void OnCrouch(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            isCrouching = true;
+            playerHeight = crouchHeight;
+            playerCollider.height = crouchHeight;
+        }
+        else if (!value.isPressed)
+        {
+            isCrouching = false;
+            playerHeight = originalHeight;
+            playerCollider.height = originalHeight;
+        }
+    }
+
+    public void OnDash(InputValue value)
+    {
+        if (value.isPressed && !isGrounded && dashCounter != 0)
+        {
+            Vector3 dashDirection = movementInput != Vector2.zero ? head.forward * movementInput.y + head.right * movementInput.x : head.forward;
+            rb.AddForce(dashDirection.normalized * dashForce, ForceMode.Impulse);
+            dashCounter--;
+        }
+    }
+
+    public void OnSprint(InputValue value)
+    {
+        isSprinting = value.isPressed;
+    }
+
+    private void LateUpdate() {
+        AlignWithCamera();
+    }
+
+    private void FixedUpdate()
+    {
+
+        moveDirection = head.forward * movementInput.y + head.right * movementInput.x;
+
+        if (!isGrounded && !onSlope())
+        {
+            rb.AddForce(moveDirection.normalized * moveSpeed * movementMultiplier * airMultiplier, ForceMode.Acceleration);
+        }
+        else if (isGrounded && onSlope())
+        {
+            rb.AddForce(slopeMoveDirection.normalized * moveSpeed * movementMultiplier, ForceMode.Acceleration);
+        }
+        else
+        {
+            rb.AddForce(moveDirection.normalized * moveSpeed * movementMultiplier, ForceMode.Acceleration);
+        }
+    }
+
+    private bool onSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight / 2 + 0.5f))
+        {
+            return slopeHit.normal != Vector3.up;
+        }
+        return false;
+    }
 }
