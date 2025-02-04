@@ -64,6 +64,10 @@ public class PlayerMovement : MonoBehaviour
     private bool isSliding = false;
     private float originalHeight;
 
+    [Header("Swing Settings")]
+    public bool isSwinging;
+    public float swingingSpeed = 20f;
+
     [SerializeField] private CinemachineCamera cinemachineCam;
 
     private void Start()
@@ -164,7 +168,9 @@ public class PlayerMovement : MonoBehaviour
     {
         float targetSpeed = isSliding ? slideSpeed :
                             isCrouching ? crouchSpeed :
+                            isSwinging ? swingingSpeed :
                             isSprinting ? runSpeed : walkSpeed;
+
 
         moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, acceleration * Time.deltaTime);
     }
@@ -216,6 +222,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // if (isSwinging) return;
 
         moveDirection = head.forward * movementInput.y + head.right * movementInput.x;
 
