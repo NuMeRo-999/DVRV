@@ -26,6 +26,8 @@ public class WallRun : MonoBehaviour
     bool wallLeft = false;
     bool wallRight = false;
 
+    public LayerMask wallMask;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -33,7 +35,7 @@ public class WallRun : MonoBehaviour
 
     public bool CanWallRun()
     {
-        return !Physics.Raycast(transform.position, Vector3.down, minimumJumpHeight);
+        return !Physics.Raycast(transform.position, Vector3.down, minimumJumpHeight, wallMask);
     }
 
     void CheckWall()
@@ -44,7 +46,7 @@ public class WallRun : MonoBehaviour
 
     bool CheckWallSide(Vector3 direction)
     {
-        return Physics.Raycast(transform.position, direction, wallDistance);
+        return Physics.Raycast(transform.position, direction, wallDistance, wallMask);
     }
 
     private void Update()

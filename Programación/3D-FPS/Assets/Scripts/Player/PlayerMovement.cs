@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float crouchSpeed = 3f;
     [SerializeField] float slideSpeed = 8f;
     [SerializeField] float crouchHeight = 1f;
-    [SerializeField] float slideDuration = 1f;
+    [SerializeField] float slideDuration = 1f; // Duración del slide
     [SerializeField] CapsuleCollider playerCollider;
 
     [Header("Drag")]
@@ -63,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isCrouching = false;
     private bool isSliding = false;
     private float originalHeight;
+    private float slideTimer = 0f; // Temporizador para el slide
 
     [Header("Swing Settings")]
     public bool isSwinging;
@@ -80,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
         originalHeight = playerHeight;
 
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;    
+        Cursor.visible = false;
     }
 
     private void Update()
@@ -107,7 +108,15 @@ public class PlayerMovement : MonoBehaviour
         ControlDrag();
         ControlSpeed();
 
-        // Alinear el jugador con la cámara
+        // Manejar el slide
+        if (isSliding)
+        {
+            slideTimer -= Time.deltaTime;
+            if (slideTimer <= 0f)
+            {
+                StopSlide();
+            }
+        }
     }
 
     void AlignWithCamera()
@@ -171,34 +180,51 @@ public class PlayerMovement : MonoBehaviour
                             isSwinging ? swingingSpeed :
                             isSprinting ? runSpeed : walkSpeed;
 
-
         moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, acceleration * Time.deltaTime);
-    }
-
-
-    void HandleCrouchAndSlide()
-    {
-        if (isCrouching && !Physics.Raycast(transform.position, Vector3.up, 2f))
-        {
-            playerHeight = originalHeight;
-            playerCollider.height = originalHeight;
-        }
     }
 
     public void OnCrouch(InputValue value)
     {
         if (value.isPressed)
         {
-            isCrouching = true;
-            playerHeight = crouchHeight;
-            playerCollider.height = crouchHeight;
+            StartCrouch();
         }
-        else if (!value.isPressed)
+        else if (!value.isPressed && !Physics.Raycast(transform.position, Vector3.up, 2f))
         {
-            isCrouching = false;
-            playerHeight = originalHeight;
-            playerCollider.height = originalHeight;
+            StopCrouch();
         }
+    }
+
+    void StartCrouch()
+    {
+        isCrouching = true;
+        playerHeight = crouchHeight;
+        playerCollider.height = crouchHeight;
+
+        // Iniciar slide si está corriendo
+        if (isSprinting && isGrounded)
+        {
+            StartSlide();
+        }
+    }
+
+    void StopCrouch()
+    {
+        isCrouching = false;
+        playerHeight = originalHeight;
+        playerCollider.height = originalHeight;
+    }
+
+    void StartSlide()
+    {
+        isSliding = true;
+        slideTimer = slideDuration; // Iniciar el temporizador del slide
+    }
+
+    void StopSlide()
+    {
+        isSliding = false;
+        slideTimer = 0f;
     }
 
     public void OnDash(InputValue value)
@@ -216,14 +242,13 @@ public class PlayerMovement : MonoBehaviour
         isSprinting = value.isPressed;
     }
 
-    private void LateUpdate() {
+    private void LateUpdate()
+    {
         AlignWithCamera();
     }
 
     private void FixedUpdate()
     {
-        // if (isSwinging) return;
-
         moveDirection = head.forward * movementInput.y + head.right * movementInput.x;
 
         if (!isGrounded && !onSlope())
