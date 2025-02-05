@@ -31,7 +31,7 @@ public class Shotgun : MonoBehaviour
     {
         if (isReloading) return;
 
-        if (Input.GetButtonDown("Fire1") && Time.time >= nextFireTime)
+        if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
         {
             if (currentAmmo > 0)
             {
