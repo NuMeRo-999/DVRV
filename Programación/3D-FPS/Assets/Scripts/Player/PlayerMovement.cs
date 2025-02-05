@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isCrouching = false;
     private bool isSliding = false;
     private float originalHeight;
-    private float slideTimer = 0f; // Temporizador para el slide
+    private float slideTimer = 0f;
 
     [Header("Swing Settings")]
     public bool isSwinging;
@@ -108,7 +108,6 @@ public class PlayerMovement : MonoBehaviour
         ControlDrag();
         ControlSpeed();
 
-        // Manejar el slide
         if (isSliding)
         {
             slideTimer -= Time.deltaTime;
@@ -119,13 +118,36 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        AlignWithCamera();
+    }
+
+    private void FixedUpdate()
+    {
+        moveDirection = head.forward * movementInput.y + head.right * movementInput.x;
+
+        if (!isGrounded && !onSlope())
+        {
+            rb.AddForce(moveDirection.normalized * moveSpeed * movementMultiplier * airMultiplier, ForceMode.Acceleration);
+        }
+        else if (isGrounded && onSlope())
+        {
+            rb.AddForce(slopeMoveDirection.normalized * moveSpeed * movementMultiplier, ForceMode.Acceleration);
+        }
+        else
+        {
+            rb.AddForce(moveDirection.normalized * moveSpeed * movementMultiplier, ForceMode.Acceleration);
+        }
+    }
+
     void AlignWithCamera()
     {
         if (cinemachineCam == null) return;
 
         Vector3 cameraForward = cinemachineCam.transform.forward;
         cameraForward.y = 0;
-        transform.rotation = Quaternion.LookRotation(cameraForward);
+        transform.rotation = Quaternion.LookRotation(cameraForward);        
 
         if (weapon != null)
         {
@@ -137,7 +159,6 @@ public class PlayerMovement : MonoBehaviour
 
             float verticalOffset = Mathf.Lerp(-0.3f, 0.3f, (cameraPitch + 70f) / 140f); // Mapear de -70° a 70°
 
-            // Ajustar la posición del arma RELATIVA a la cámara (siempre a la derecha del jugador)
             weapon.position = head.position
                 + cinemachineCam.transform.forward * 1f
                 + cinemachineCam.transform.right * 0.4f
@@ -201,7 +222,6 @@ public class PlayerMovement : MonoBehaviour
         playerHeight = crouchHeight;
         playerCollider.height = crouchHeight;
 
-        // Iniciar slide si está corriendo
         if (isSprinting && isGrounded)
         {
             StartSlide();
@@ -218,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
     void StartSlide()
     {
         isSliding = true;
-        slideTimer = slideDuration; // Iniciar el temporizador del slide
+        slideTimer = slideDuration;
     }
 
     void StopSlide()
@@ -240,30 +260,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnSprint(InputValue value)
     {
         isSprinting = value.isPressed;
-    }
-
-    private void LateUpdate()
-    {
-        AlignWithCamera();
-    }
-
-    private void FixedUpdate()
-    {
-        moveDirection = head.forward * movementInput.y + head.right * movementInput.x;
-
-        if (!isGrounded && !onSlope())
-        {
-            rb.AddForce(moveDirection.normalized * moveSpeed * movementMultiplier * airMultiplier, ForceMode.Acceleration);
-        }
-        else if (isGrounded && onSlope())
-        {
-            rb.AddForce(slopeMoveDirection.normalized * moveSpeed * movementMultiplier, ForceMode.Acceleration);
-        }
-        else
-        {
-            rb.AddForce(moveDirection.normalized * moveSpeed * movementMultiplier, ForceMode.Acceleration);
-        }
-    }
+    }  
 
     private bool onSlope()
     {
@@ -272,5 +269,5 @@ public class PlayerMovement : MonoBehaviour
             return slopeHit.normal != Vector3.up;
         }
         return false;
-    }
+    }    
 }

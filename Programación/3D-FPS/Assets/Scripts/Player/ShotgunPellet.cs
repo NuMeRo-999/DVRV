@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class ShotgunPellet : MonoBehaviour
 {
@@ -8,7 +9,8 @@ public class ShotgunPellet : MonoBehaviour
     public float lifetime = 2f;
     public int damage = 10;
     public LayerMask hitLayers;
-    public ParticleSystem impactEffect; // Prefab del sistema de partículas
+    public ParticleSystem impactEffect;
+    public GameObject bloodBurstEffectPrefab;
     public GameObject bulletTrailPrefab;
 
     private Rigidbody rb;
@@ -31,12 +33,25 @@ public class ShotgunPellet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // if(collision.gameObject.CompareTag("Ground"))
+        ContactPoint contact = collision.contacts[0]; // Primer punto de contacto
+
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            if (bloodBurstEffectPrefab)
+            {
+                GameObject burst = Instantiate(bloodBurstEffectPrefab, contact.point, Quaternion.LookRotation(contact.normal));
+                ParticleSystem burstParticles = burst.GetComponent<ParticleSystem>();
+                if (burstParticles != null)
+                {
+                    burstParticles.Play();
+                }
+                Destroy(burst, 3f);
+            }
+        }
+
         if (((1 << collision.gameObject.layer) & hitLayers) != 0)
     {
-        ContactPoint contact = collision.contacts[0]; // Primer punto de contacto
     
-        // Crear el efecto de impacto en el punto exacto con la rotación adecuada
         if (impactEffect)
         {
             ParticleSystem impact = Instantiate(impactEffect, contact.point, Quaternion.LookRotation(contact.normal));
