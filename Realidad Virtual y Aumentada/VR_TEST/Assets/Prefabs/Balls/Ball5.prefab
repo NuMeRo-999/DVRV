@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 28390215774076800}
   - component: {fileID: 18818976529061077}
   - component: {fileID: 5560054004007277298}
+  - component: {fileID: 6159473139162555515}
   m_Layer: 0
   m_Name: Ball5
   m_TagString: Untagged
@@ -260,3 +261,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.9006741
   m_Center: {x: -0.00000017881393, y: 0, z: -0.00000011920929}
+--- !u!114 &6159473139162555515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4745370651180609419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84e3953ae9fe6a14da08fd14e68cc703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  impactEffect: {fileID: 0}
+  impactSound: {fileID: 0}
+  glowLight: {fileID: 0}
