@@ -14,9 +14,6 @@ public class GrappleEffect : MonoBehaviour
 	private Vector3 swingPoint;
 	private SpringJoint joint;
 
-	[Header("Input")]
-	public KeyCode swingKey = KeyCode.Mouse0;
-
 	[Header("Grapple Effect")]
 	public float Speed = 3f;
 	public float SpiralSpeed = 4f;
