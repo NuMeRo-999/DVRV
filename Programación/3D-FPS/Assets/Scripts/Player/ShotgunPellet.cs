@@ -35,7 +35,7 @@ public class ShotgunPellet : MonoBehaviour
     {
         ContactPoint contact = collision.contacts[0]; // Primer punto de contacto
 
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             if (bloodBurstEffectPrefab)
             {
@@ -47,27 +47,30 @@ public class ShotgunPellet : MonoBehaviour
                 }
                 Destroy(burst, 3f);
             }
+
+            collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+
         }
 
         if (((1 << collision.gameObject.layer) & hitLayers) != 0)
-    {
-    
-        if (impactEffect)
         {
-            ParticleSystem impact = Instantiate(impactEffect, contact.point, Quaternion.LookRotation(contact.normal));
-            Destroy(impact.gameObject, 1.5f); // Destruir después de 1.5s
+
+            if (impactEffect)
+            {
+                ParticleSystem impact = Instantiate(impactEffect, contact.point, Quaternion.LookRotation(contact.normal));
+                Destroy(impact.gameObject, 1.5f);
+            }
+
+            DestroyBullet();
         }
-    
-        DestroyBullet();
-    }
     }
 
     private void DestroyBullet()
     {
         if (bulletTrailInstance)
         {
-            bulletTrailInstance.transform.SetParent(null); // Liberar el trail para que termine
-            Destroy(bulletTrailInstance, 0.5f); // Darle tiempo al trail para desvanecerse
+            bulletTrailInstance.transform.SetParent(null);
+            Destroy(bulletTrailInstance, 0.5f);
         }
 
         Destroy(gameObject);

@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     private Animator animator;
 
     public GameObject meatGenerator;
+    public bool isDead = false;
 
     public float health = 100f;
 
@@ -28,7 +29,7 @@ public class Enemy : MonoBehaviour
         health -= damage;
         if (health <= 0)
         {
-
+            Die();
         }
     }
 
@@ -36,9 +37,16 @@ public class Enemy : MonoBehaviour
     {
         if (meatGenerator)
         {
-            Instantiate(meatGenerator, transform.position, Quaternion.identity);
+            print("Generating meat");
+            if (!isDead)
+            {
+                Instantiate(meatGenerator, transform.position + Vector3.up, Quaternion.identity);
+                isDead = true;
+            }
         }
-        
+
         Destroy(gameObject);
     }
+
+    
 }
