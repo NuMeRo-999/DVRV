@@ -48,7 +48,19 @@ public class ShotgunPellet : MonoBehaviour
                 Destroy(burst, 3f);
             }
 
-            collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+            }
+            else
+            {
+                RangeEnemy rangeEnemy = collision.gameObject.GetComponent<RangeEnemy>();
+                if (rangeEnemy != null)
+                {
+                    rangeEnemy.TakeDamage(damage);
+                }
+            }
 
         }
 
@@ -58,6 +70,7 @@ public class ShotgunPellet : MonoBehaviour
             if (impactEffect)
             {
                 ParticleSystem impact = Instantiate(impactEffect, contact.point, Quaternion.LookRotation(contact.normal));
+                impact.transform.SetParent(collision.transform);
                 Destroy(impact.gameObject, 1.5f);
             }
 
