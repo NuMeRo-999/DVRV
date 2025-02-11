@@ -1,132 +1,104 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class RangeEnemy : MonoBehaviour
 {
-    public GameObject player;
-    private NavMeshAgent navMeshAgent;
+    public enum EnemyState { Idle, Alert, Attack }
+    public Transform player;
     private Animator animator;
 
     public GameObject meatGenerator;
     public bool isDead = false;
     public float health = 100f;
 
-    public enum NPCState { Idle, Alert, Attack }
-    public NPCState currentState = NPCState.Idle;
+    public EnemyState currentState = EnemyState.Idle; 
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+    public float detectionRange = 10f;
+    public float attackRange = 7f;
+    public float moveSpeed = 3f;
+    public float fireRate = 1.5f;
+    public float searchTime = 2f; // Tiempo que se queda en alerta tras perder al jugador
 
-    [Header("Player Tracking")]
-    [SerializeField] private float playerDetectionRange = 15f;
-    [SerializeField] private float attackRange = 10f;
-    [SerializeField] private float stopChaseDistance = 7f;
-    [SerializeField] private float angleVision = 60f;
-
-    [Header("Shooting Settings")]
-    [SerializeField] private GameObject projectilePrefab;
-    [SerializeField] private Transform firePoint;
-    [SerializeField] private float fireRate = 1f;
-    [SerializeField] private float projectileSpeed = 20f;
-    private bool canShoot = true;
+    private NavMeshAgent agent;
+    private float nextFireTime;
+    private Vector3 lastKnownPosition;
+    private float searchTimer;
 
     void Start()
     {
-        navMeshAgent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        navMeshAgent.isStopped = true;
-        navMeshAgent.stoppingDistance = stopChaseDistance;
+        agent.speed = moveSpeed;
     }
 
     void Update()
     {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
         switch (currentState)
         {
-            case NPCState.Idle:
-                DetectPlayer();
-                break;
-            case NPCState.Alert:
-                ChasePlayer();
-                break;
-            case NPCState.Attack:
-                Attack();
-                break;
-        }
-    }
-
-    private void DetectPlayer()
-    {
-        Vector3 directionToPlayer = player.transform.position - transform.position;
-
-        if (Vector3.Distance(transform.position, player.transform.position) < playerDetectionRange &&
-            Vector3.Angle(transform.forward, directionToPlayer) < angleVision)
-        {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, directionToPlayer, out hit, playerDetectionRange))
-            {
-                if (hit.collider.gameObject == player)
+            case EnemyState.Idle:
+                animator.SetBool("Running", false);
+                animator.SetBool("Shooting", false);
+                agent.isStopped = true;
+                if (distanceToPlayer <= detectionRange)
                 {
-                    currentState = NPCState.Alert;
-                    navMeshAgent.isStopped = false;
-                    animator.SetBool("Running", true);
+                    lastKnownPosition = player.position; // Guarda la posición del jugador
+                    currentState = EnemyState.Alert;
                 }
-            }
+                break;
+
+            case EnemyState.Alert:
+                animator.SetBool("Running", true);
+
+                if (distanceToPlayer <= attackRange)
+                {
+                    currentState = EnemyState.Attack;
+                }
+                else if (distanceToPlayer > detectionRange)
+                {
+                    searchTimer += Time.deltaTime;
+                    agent.isStopped = true; // Se queda quieto en la última posición conocida
+                    if (searchTimer >= searchTime)
+                    {
+                        currentState = EnemyState.Idle; // Si pasa el tiempo, vuelve a Idle
+                        searchTimer = 0f;
+                    }
+                }
+                else
+                {
+                    lastKnownPosition = player.position; // Actualiza la última posición conocida
+                    agent.isStopped = false;
+                    agent.SetDestination(player.position);
+                }
+                break;
+
+            case EnemyState.Attack:
+                animator.SetBool("Running", false);
+                animator.SetBool("Shooting", true);
+                agent.isStopped = true;
+                transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
+
+                if (distanceToPlayer > attackRange)
+                {
+                    currentState = EnemyState.Alert;
+                    searchTimer = 0f;
+                }
+                else if (Time.time >= nextFireTime)
+                {
+                    Shoot();
+                }
+                break;
         }
     }
 
-    private void ChasePlayer()
+    void Shoot()
     {
-        if (Vector3.Distance(transform.position, player.transform.position) > stopChaseDistance)
-        {
-            navMeshAgent.SetDestination(player.transform.position);
-        }
-        else
-        {
-            navMeshAgent.ResetPath();
-        }
-
-        if (Vector3.Distance(transform.position, player.transform.position) <= attackRange)
-        {
-            currentState = NPCState.Attack;
-            animator.SetBool("Running", false);
-        }
-        else if (Vector3.Distance(transform.position, player.transform.position) > playerDetectionRange)
-        {
-            currentState = NPCState.Idle;
-            navMeshAgent.isStopped = true;
-            animator.SetBool("Running", false);
-        }
-    }
-
-    private void Attack()
-    {
-        transform.LookAt(player.transform);
-
-        if (Vector3.Distance(transform.position, player.transform.position) > attackRange)
-        {
-            currentState = NPCState.Alert;
-            return;
-        }
-
-        if (canShoot)
-        {
-            canShoot = false;
-            animator.SetTrigger("Shoot");
-            StartCoroutine(ShootProjectile());
-        }
-    }
-
-    private IEnumerator ShootProjectile()
-    {
-        yield return new WaitForSeconds(0.5f); // Simula el tiempo de la animación de disparo
-
-        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
-        Rigidbody rb = projectile.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.linearVelocity = firePoint.forward * projectileSpeed;
-        }
-
-        yield return new WaitForSeconds(fireRate);
-        canShoot = true;
+        nextFireTime = Time.time + fireRate;
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        EnemyBullet enemyBullet = bullet.GetComponent<EnemyBullet>();
+        enemyBullet.Initialize(player, 10f, 0.1f, 10, LayerMask.GetMask("Player"), 3f);
     }
 
     public void TakeDamage(int damage)
@@ -146,23 +118,5 @@ public class RangeEnemy : MonoBehaviour
             isDead = true;
         }
         Destroy(gameObject);
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, playerDetectionRange);
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-
-        Vector3 frontRayPoint = transform.position + (transform.forward * playerDetectionRange);
-        Vector3 leftRayPoint = Quaternion.Euler(0, angleVision * 0.5f, 0) * frontRayPoint;
-        Vector3 rightRayPoint = Quaternion.Euler(0, -angleVision * 0.5f, 0) * frontRayPoint;
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, frontRayPoint);
-        Gizmos.DrawLine(transform.position, leftRayPoint);
-        Gizmos.DrawLine(transform.position, rightRayPoint);
     }
 }

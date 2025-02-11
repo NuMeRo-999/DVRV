@@ -2,22 +2,20 @@ using UnityEngine;
 
 public class EnemyBullet : MonoBehaviour
 {
+    private Transform target;
     public float speed = 30f;
     public float lifetime = 3f;
     public int damage = 10;
     public LayerMask hitLayers;
     public ParticleSystem impactEffect;
     public GameObject bulletTrailPrefab;
+    public float homingStrength;
 
-    private Rigidbody rb;
+
     private GameObject bulletTrailInstance;
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.useGravity = false;
-        rb.linearVelocity = transform.forward * speed;
-
         if (bulletTrailPrefab)
         {
             bulletTrailInstance = Instantiate(bulletTrailPrefab, transform.position, Quaternion.identity);
@@ -25,6 +23,26 @@ public class EnemyBullet : MonoBehaviour
         }
 
         Destroy(gameObject, lifetime);
+    }
+    public void Initialize(Transform player, float bulletSpeed, float homing, int bulletDamage, LayerMask layer, float bulletLifetime)
+    {
+        target = player;
+        speed = bulletSpeed;
+        homingStrength = homing;
+        damage = bulletDamage;
+        lifetime = bulletLifetime;
+        
+        Destroy(gameObject, lifetime);
+    }
+
+    void Update()
+    {
+        if (target)
+        {
+            Vector3 direction = (target.position - transform.position).normalized;
+            transform.forward = Vector3.Lerp(transform.forward, direction, homingStrength * Time.deltaTime);
+        }
+        transform.position += transform.forward * speed * Time.deltaTime;
     }
 
     private void OnTriggerEnter(Collider other)
