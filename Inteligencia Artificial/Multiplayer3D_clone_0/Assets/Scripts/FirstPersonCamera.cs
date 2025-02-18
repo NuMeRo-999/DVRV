@@ -8,6 +8,10 @@ public class FirstPersonCamera : MonoBehaviour
     private float verticalRotation;
     private float horizontalRotation;
 
+    void Start()
+    {
+    }
+
     void LateUpdate()
     {
         if (Target == null)
@@ -27,4 +31,12 @@ public class FirstPersonCamera : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0);
     }
+
+    // public void SetTarget()
+    // {
+    //     Target = GameObject.FindGameObjectWithTag("Player").transform;
+    //     transform.position = Target.position;
+    //     transform.rotation = Target.rotation;
+    //     transform.SetParent(Target);
+    // }
 }

@@ -13,9 +13,13 @@ public class PlayerMovement : NetworkBehaviour
     public float JumpForce = 5f;
     public float GravityValue = -9.81f;
 
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private Transform camTransform;
+
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
+        // cam = Camera.main;
     }
 
     void Update()
@@ -50,5 +54,18 @@ public class PlayerMovement : NetworkBehaviour
         }
 
         _jumpPressed = false;
+    }
+
+    public Camera GetCamera()
+    {
+        return playerCamera;
+    }
+    
+    public void SetCamera(Camera camera)
+    {
+        playerCamera = camera;
+        playerCamera.transform.position = camTransform.position;
+        playerCamera.transform.rotation = camTransform.rotation;
+        playerCamera.transform.SetParent(transform);
     }
 }
