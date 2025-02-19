@@ -90,4 +90,14 @@ public class WallRun : MonoBehaviour
         Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, fov, wallRunFOVTime * Time.deltaTime);
         Camera.main.transform.localRotation = Quaternion.Lerp(Camera.main.transform.localRotation, Quaternion.Euler(0, 0, 0), camTiltTime * Time.deltaTime);
     }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * minimumJumpHeight);
+    
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position + -orientation.right * wallDistance);
+        Gizmos.DrawLine(transform.position, transform.position + orientation.right * wallDistance);
+    }
 }
