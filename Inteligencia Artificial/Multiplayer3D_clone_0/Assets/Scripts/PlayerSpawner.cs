@@ -7,7 +7,12 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
 {
     [SerializeField] private Material[] materials;
     public GameObject PlayerPrefab;
-    public float randomSpawnPoint = 10f;
+
+    [Header("Spawn Range")]
+    [SerializeField] private float minX;
+    [SerializeField] private float maxX;
+    [SerializeField] private float minZ;
+    [SerializeField] private float maxZ;
 
     private static List<Material> availableMaterials = new List<Material>();
     private static Material assignedMaterial;
@@ -25,8 +30,8 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
     {
         if (player == Runner.LocalPlayer)
         {
-            float randomX = UnityEngine.Random.Range(-randomSpawnPoint, randomSpawnPoint);
-            float randomZ = UnityEngine.Random.Range(-randomSpawnPoint, randomSpawnPoint);
+            float randomX = UnityEngine.Random.Range(minX, maxX);
+            float randomZ = UnityEngine.Random.Range(minZ, maxZ);
             print(randomX + " " + randomZ);
 
             Vector3 spawnPosition = new Vector3(randomX, 1, randomZ);
