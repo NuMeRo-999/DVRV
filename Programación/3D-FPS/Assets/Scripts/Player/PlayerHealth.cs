@@ -49,7 +49,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Blood")) {
-            Invoke("Die", 2f);
+            Die();
         }
     }
 }

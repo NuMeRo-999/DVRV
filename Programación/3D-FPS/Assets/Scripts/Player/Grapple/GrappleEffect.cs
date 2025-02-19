@@ -124,4 +124,21 @@ public class GrappleEffect : MonoBehaviour
 			lr.SetPosition(i, position);
 		}
 	}
+	
+	void OnDrawGizmos()
+	{
+		if (gunTip != null)
+		{
+			Gizmos.color = Color.red;
+			Gizmos.DrawSphere(gunTip.position, 0.1f);
+		}
+
+		if (swingPoint != Vector3.zero)
+		{
+			Gizmos.color = Color.green;
+			Gizmos.DrawLine(gunTip.position, swingPoint);
+			Gizmos.DrawSphere(swingPoint, 0.1f);
+		}
+	}
+
 }

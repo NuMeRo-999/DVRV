@@ -26,7 +26,7 @@ public class GrappleTester : MonoBehaviour
 				// Apuntar el grappling hacia el punto de impacto
 				GappleEffect.transform.LookAt(hit.point);
 				// Iniciar el grappling
-				GappleEffect.StartSwing(hit.point);
+				GappleEffect.StartSwing();
 			}
 		}
 
@@ -35,4 +35,13 @@ public class GrappleTester : MonoBehaviour
 			GappleEffect.StopSwing();
 		}
 	}
+
+    void OnDrawGizmos()
+    {
+			if (mainCamera != null)
+			{
+				Gizmos.color = Color.red;
+				Gizmos.DrawRay(mainCamera.transform.position, mainCamera.transform.forward * maxRayDistance);
+			}
+    }
 }
