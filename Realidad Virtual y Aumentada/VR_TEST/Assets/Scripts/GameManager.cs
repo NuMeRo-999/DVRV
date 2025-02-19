@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
         remainingPins = 0;
         foreach (GameObject pin in pins)
         {
-            if (pin.activeSelf && pin.transform.up.y > 0.5f && pin.CompareTag("Pin")) // Comprobar si el bolo sigue en pie
+            if (pin.activeSelf && pin.transform.up.y > 0.5f && pin.CompareTag("Pin"))
             {
                 remainingPins++;
             }
