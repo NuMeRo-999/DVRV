@@ -26,6 +26,7 @@ public class PlayerHealth : MonoBehaviour
         {
             health = maxHealth;
         }
+        healthSlider.GetComponent<Slider>().value = health;
     }
 
     public void TakeDamage(int damage)
@@ -49,7 +50,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Blood")) {
-            Invoke("Die", 2f);
+            Die();
         }
     }
 }

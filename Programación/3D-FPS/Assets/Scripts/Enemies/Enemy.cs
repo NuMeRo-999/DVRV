@@ -27,6 +27,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float attackCooldown = 1f;
     private bool canAttack = true;
 
+    public AudioSource dieSound;
+    public AudioSource attackSound;
+
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -104,6 +107,7 @@ public class Enemy : MonoBehaviour
         if (Vector3.Distance(transform.position, player.transform.position) > attackRange)
         {
             currentState = NPCState.Alert;
+            if (attackSound) attackSound.Play();
             animator.SetBool("Attacking", false);
             animator.SetBool("Running", true);
             return;
@@ -154,6 +158,7 @@ public class Enemy : MonoBehaviour
         {
             Instantiate(meatGenerator, transform.position + Vector3.up, Quaternion.identity);
             isDead = true;
+            if (dieSound) dieSound.Play();
         }
         Destroy(gameObject);
     }

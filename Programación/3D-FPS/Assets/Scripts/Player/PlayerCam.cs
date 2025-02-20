@@ -7,6 +7,8 @@ public class PlayerCam : MonoBehaviour
 
     public Transform orientation;
 
+    public Transform target;
+
     float xRotation;
     float yRotation;
 
@@ -16,9 +18,12 @@ public class PlayerCam : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;    
     }
+    
 
     void Update()
     {
+        transform.position = target.position;
+
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
 

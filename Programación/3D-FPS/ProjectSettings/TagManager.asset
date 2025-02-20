@@ -8,6 +8,7 @@ TagManager:
   - Bullet
   - CinemachineTarget
   - Blood
+  - End
   layers:
   - Default
   - TransparentFX

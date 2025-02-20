@@ -3,6 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class ButtonsAction : MonoBehaviour
 {
+    public void LoadGameScene()
+    {
+        SceneManager.LoadScene("Game");
+    }
 
     public void RestartScene()
     {

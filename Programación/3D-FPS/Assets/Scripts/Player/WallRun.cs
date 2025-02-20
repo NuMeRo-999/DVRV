@@ -6,7 +6,6 @@ using Unity.Cinemachine;
 public class WallRun : MonoBehaviour
 {
     [SerializeField] Transform orientation;
-    [SerializeField] CinemachineCamera vcam; // Cinemachine Camera
 
     [Header("Wall Running")]
     [SerializeField] float wallDistance = 0.6f;
@@ -66,13 +65,13 @@ public class WallRun : MonoBehaviour
         rb.AddForce(Vector3.down * wallRunGravity, ForceMode.Force);
 
         // Ajustar FOV
-        vcam.Lens.FieldOfView = Mathf.Lerp(vcam.Lens.FieldOfView, wallRunFOV, wallRunFOVTime * Time.deltaTime);
+        Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, wallRunFOV, wallRunFOVTime * Time.deltaTime);
 
-        // Ajustar inclinación lateral con Dutch
+        // Ajustar inclinación lateral con rotación de la cámara
         if (wallLeft)
-            vcam.Lens.Dutch = Mathf.Lerp(vcam.Lens.Dutch, -camTilt, camTiltTime * Time.deltaTime);
+            Camera.main.transform.localRotation = Quaternion.Lerp(Camera.main.transform.localRotation, Quaternion.Euler(0, 0, -camTilt), camTiltTime * Time.deltaTime);
         else if (wallRight)
-            vcam.Lens.Dutch = Mathf.Lerp(vcam.Lens.Dutch, camTilt, camTiltTime * Time.deltaTime);
+            Camera.main.transform.localRotation = Quaternion.Lerp(Camera.main.transform.localRotation, Quaternion.Euler(0, 0, camTilt), camTiltTime * Time.deltaTime);
 
         // Salto desde la pared
         if (Input.GetKeyDown(KeyCode.Space))
@@ -88,7 +87,17 @@ public class WallRun : MonoBehaviour
         rb.useGravity = true;
 
         // Restaurar FOV y Dutch
-        vcam.Lens.FieldOfView = Mathf.Lerp(vcam.Lens.FieldOfView, fov, wallRunFOVTime * Time.deltaTime);
-        vcam.Lens.Dutch = Mathf.Lerp(vcam.Lens.Dutch, 0, camTiltTime * Time.deltaTime);
+        Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, fov, wallRunFOVTime * Time.deltaTime);
+        Camera.main.transform.localRotation = Quaternion.Lerp(Camera.main.transform.localRotation, Quaternion.Euler(0, 0, 0), camTiltTime * Time.deltaTime);
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * minimumJumpHeight);
+    
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position + -orientation.right * wallDistance);
+        Gizmos.DrawLine(transform.position, transform.position + orientation.right * wallDistance);
     }
 }

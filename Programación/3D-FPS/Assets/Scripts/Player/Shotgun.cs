@@ -11,6 +11,7 @@ public class Shotgun : MonoBehaviour
     public float spread = 5f; // Grados de dispersión
     public float fireRate = 1f; // Tiempo entre disparos
     private float nextFireTime = 0f;
+    private Animator animator;
 
     [Header("Munición")]
     public int maxAmmo = 8;
@@ -21,10 +22,15 @@ public class Shotgun : MonoBehaviour
     [Header("Efectos")]
     public ParticleSystem muzzleFlash;
     public AudioSource shotgunSound;
+    public AudioSource reloadSound;
+
+    private Camera cam;
 
     private void Start()
     {
         currentAmmo = maxAmmo;
+        cam = Camera.main;
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -72,6 +78,8 @@ public class Shotgun : MonoBehaviour
     IEnumerator Reload()
     {
         isReloading = true;
+        if (reloadSound) reloadSound.Play();
+        animator.SetTrigger("Reload");
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
         isReloading = false;

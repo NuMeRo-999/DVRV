@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float crouchSpeed = 3f;
     [SerializeField] float slideSpeed = 8f;
     [SerializeField] float crouchHeight = 1f;
-    [SerializeField] float slideDuration = 1f; // Duración del slide
+    [SerializeField] float slideDuration = 1f;
     [SerializeField] CapsuleCollider playerCollider;
 
     [Header("Drag")]
@@ -52,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
 
     private WallRun wallRun;
     private Vector2 movementInput;
-    private Vector2 lookInput;
+    public Vector2 lookInput;
 
     Vector3 moveDirection;
     Vector3 slopeMoveDirection;
@@ -68,8 +67,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Swing Settings")]
     public bool isSwinging;
     public float swingingSpeed = 20f;
-
-    [SerializeField] private CinemachineCamera cinemachineCam;
 
     private void Start()
     {
@@ -94,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            cf.force = new Vector3(0, 0, 0);
+            cf.force = Vector3.zero;
 
             if (isGrounded)
             {
@@ -118,11 +115,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void LateUpdate()
-    {
-        AlignWithCamera();
-    }
-
     private void FixedUpdate()
     {
         moveDirection = head.forward * movementInput.y + head.right * movementInput.x;
@@ -138,31 +130,6 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             rb.AddForce(moveDirection.normalized * moveSpeed * movementMultiplier, ForceMode.Acceleration);
-        }
-    }
-
-    void AlignWithCamera()
-    {
-        if (cinemachineCam == null) return;
-
-        Vector3 cameraForward = cinemachineCam.transform.forward;
-        cameraForward.y = 0;
-        transform.rotation = Quaternion.LookRotation(cameraForward);        
-
-        if (weapon != null)
-        {
-            weapon.rotation = cinemachineCam.transform.rotation * Quaternion.Euler(0, 180, 0);
-
-            float cameraPitch = cinemachineCam.State.RawOrientation.eulerAngles.x;
-            if (cameraPitch > 180f) cameraPitch -= 360f;
-            cameraPitch = Mathf.Clamp(cameraPitch, -70f, 70f);
-
-            float verticalOffset = Mathf.Lerp(-0.3f, 0.3f, (cameraPitch + 70f) / 140f); // Mapear de -70° a 70°
-
-            weapon.position = head.position
-                + cinemachineCam.transform.forward * 1f
-                + cinemachineCam.transform.right * 0.4f
-                + Vector3.up * (verticalOffset - 0.5f);
         }
     }
 
@@ -260,7 +227,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnSprint(InputValue value)
     {
         isSprinting = value.isPressed;
-    }  
+    }
 
     private bool onSlope()
     {
@@ -269,5 +236,5 @@ public class PlayerMovement : MonoBehaviour
             return slopeHit.normal != Vector3.up;
         }
         return false;
-    }    
+    }
 }

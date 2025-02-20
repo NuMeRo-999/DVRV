@@ -10,7 +10,7 @@ public class Rain : MonoBehaviour
 
     void Update()
     {
-        currentPlayerPos = new Vector3(player.localPosition.x, 15, player.localPosition.z);
+        currentPlayerPos = new Vector3(player.localPosition.x, player.localPosition.y + 15, player.localPosition.z);
 
         transform.position = Vector3.SmoothDamp(transform.position, currentPlayerPos, ref velocity, rainSmoothSpeed);
     }
