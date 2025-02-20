@@ -24,6 +24,9 @@ public class RangeEnemy : MonoBehaviour
     private float nextFireTime;
     private Vector3 lastKnownPosition;
     private float searchTimer;
+    public AudioSource dieSound;
+    public AudioSource shootSound;
+
 
     void Start()
     {
@@ -96,9 +99,10 @@ public class RangeEnemy : MonoBehaviour
     void Shoot()
     {
         nextFireTime = Time.time + fireRate;
+        if (shootSound) shootSound.Play();
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         EnemyBullet enemyBullet = bullet.GetComponent<EnemyBullet>();
-        enemyBullet.Initialize(player, 10f, 0.1f, 10, LayerMask.GetMask("Player"), 3f);
+        enemyBullet.Initialize(player, 10f, 10, LayerMask.GetMask("Player"), 3f);
     }
 
     public void TakeDamage(int damage)
@@ -116,7 +120,17 @@ public class RangeEnemy : MonoBehaviour
         {
             Instantiate(meatGenerator, transform.position + Vector3.up, Quaternion.identity);
             isDead = true;
+            if (dieSound) dieSound.Play();
         }
         Destroy(gameObject);
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }

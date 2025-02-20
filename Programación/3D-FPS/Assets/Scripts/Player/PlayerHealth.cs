@@ -26,6 +26,7 @@ public class PlayerHealth : MonoBehaviour
         {
             health = maxHealth;
         }
+        healthSlider.GetComponent<Slider>().value = health;
     }
 
     public void TakeDamage(int damage)

@@ -22,6 +22,7 @@ public class Shotgun : MonoBehaviour
     [Header("Efectos")]
     public ParticleSystem muzzleFlash;
     public AudioSource shotgunSound;
+    public AudioSource reloadSound;
 
     private Camera cam;
 
@@ -77,6 +78,7 @@ public class Shotgun : MonoBehaviour
     IEnumerator Reload()
     {
         isReloading = true;
+        if (reloadSound) reloadSound.Play();
         animator.SetTrigger("Reload");
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;

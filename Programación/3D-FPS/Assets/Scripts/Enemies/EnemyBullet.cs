@@ -9,8 +9,6 @@ public class EnemyBullet : MonoBehaviour
     public LayerMask hitLayers;
     public ParticleSystem impactEffect;
     public GameObject bulletTrailPrefab;
-    public float homingStrength;
-
 
     private GameObject bulletTrailInstance;
 
@@ -24,11 +22,11 @@ public class EnemyBullet : MonoBehaviour
 
         Destroy(gameObject, lifetime);
     }
-    public void Initialize(Transform player, float bulletSpeed, float homing, int bulletDamage, LayerMask layer, float bulletLifetime)
+
+    public void Initialize(Transform player, float bulletSpeed, int bulletDamage, LayerMask layer, float bulletLifetime)
     {
         target = player;
         speed = bulletSpeed;
-        homingStrength = homing;
         damage = bulletDamage;
         lifetime = bulletLifetime;
         
@@ -40,7 +38,7 @@ public class EnemyBullet : MonoBehaviour
         if (target)
         {
             Vector3 direction = (target.position - transform.position).normalized;
-            transform.forward = Vector3.Lerp(transform.forward, direction, homingStrength * Time.deltaTime);
+            transform.forward = direction;
         }
         transform.position += transform.forward * speed * Time.deltaTime;
     }

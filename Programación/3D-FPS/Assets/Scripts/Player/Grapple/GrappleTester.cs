@@ -2,48 +2,37 @@
 
 public class GrappleTester : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private GrappleEffect GappleEffect;
-    [SerializeField] private float maxRayDistance = 50f;
-    [SerializeField] private LayerMask whatIsGrappleable;
+	[Header("References")]
+	[SerializeField] private GrappleEffect GappleEffect;
+	[SerializeField] private float maxRayDistance = 50f;
 
-    private Camera mainCamera;
+	private Camera mainCamera;
 
-    private void Awake()
-    {
-        mainCamera = Camera.main;
+	private void Awake()
+	{
+		mainCamera = Camera.main;
 
-        if (GappleEffect == null)
-            GappleEffect = GetComponent<GrappleEffect>();
-    }
+		if (GappleEffect == null)
+			GappleEffect = GetComponent<GrappleEffect>();
+	}
 
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            RaycastHit hit;
-            Vector3 rayDirection = mainCamera.transform.forward;
-            Debug.DrawRay(mainCamera.transform.position, rayDirection * maxRayDistance, Color.red, 2f); // Dibuja el rayo en el Editor
+	private void Update()
+	{
+		if (Input.GetMouseButtonDown(1))
+		{
+			RaycastHit hit;
+			if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out hit, maxRayDistance))
+			{
+				// Apuntar el grappling hacia el punto de impacto
+				GappleEffect.transform.LookAt(hit.point);
+				// Iniciar el grappling
+				GappleEffect.StartSwing(hit.point);
+			}
+		}
 
-            if (Physics.Raycast(mainCamera.transform.position, rayDirection, out hit, maxRayDistance, whatIsGrappleable))
-            {
-                Debug.Log("Hit: " + hit.collider.name); // Imprime el nombre del objeto con el que colisiona
-                GappleEffect.StartSwing(hit.point); // Envía el punto de impacto al gancho
-            }
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            GappleEffect.StopSwing();
-        }
-    }
-
-    void OnDrawGizmos()
-    {
-        if (mainCamera != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawRay(mainCamera.transform.position, mainCamera.transform.forward * maxRayDistance);
-        }
-    }
+		if (Input.GetMouseButtonUp(1))
+		{
+			GappleEffect.StopSwing();
+		}
+	}
 }
