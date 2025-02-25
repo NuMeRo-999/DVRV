@@ -10,6 +10,7 @@ public class FirstPersonCamera : MonoBehaviour
 
     void Start()
     {
+        transform.position = Target.position;
     }
 
     void LateUpdate()

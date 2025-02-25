@@ -1,5 +1,6 @@
 using Fusion;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -15,6 +16,10 @@ public class PlayerMovement : NetworkBehaviour
 
     [SerializeField] private Camera playerCamera;
     [SerializeField] private Transform camTransform;
+
+    private Vector2 cameraInput;
+    public float sensitivity = 10f;
+    private float verticalRotation;
 
     private void Awake()
     {
@@ -53,7 +58,22 @@ public class PlayerMovement : NetworkBehaviour
             gameObject.transform.forward = move;
         }
 
+    
+        Vector2 look = cameraInput * sensitivity;
+        verticalRotation -= look.y;
+        verticalRotation = Mathf.Clamp(verticalRotation, -90, 90);
+        playerCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
+        transform.Rotate(Vector3.up * look.x);
+
         _jumpPressed = false;
+    }
+
+    public void onLook(InputValue value)
+    {
+        if(!HasStateAuthority)
+        {
+            cameraInput = value.Get<Vector2>();
+        }
     }
 
     public Camera GetCamera()
