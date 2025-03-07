@@ -28,11 +28,11 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
 
     public void PlayerJoined(PlayerRef player)
     {
+        Debug.Log($"Player joined: {player} | LocalPlayer: {Runner.LocalPlayer}");
         if (player == Runner.LocalPlayer)
         {
             float randomX = UnityEngine.Random.Range(minX, maxX);
             float randomZ = UnityEngine.Random.Range(minZ, maxZ);
-            print(randomX + " " + randomZ);
 
             Vector3 spawnPosition = new Vector3(randomX, 1, randomZ);
             NetworkObject networkObject = Runner.Spawn(PlayerPrefab, spawnPosition, Quaternion.identity, player);

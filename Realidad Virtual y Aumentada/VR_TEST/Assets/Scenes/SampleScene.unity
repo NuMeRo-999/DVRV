@@ -2146,7 +2146,7 @@ RectTransform:
   m_Father: {fileID: 1025862488}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.2, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2579,7 +2579,7 @@ Transform:
   m_GameObject: {fileID: 562067036}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.97034, y: -0.16985875, z: -15.960984}
+  m_LocalPosition: {x: 4.97034, y: 0.126, z: -16.162}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2966,11 +2966,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &845345036 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8802527524261428125, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
-  m_PrefabInstance: {fileID: 7609282223919371763}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &845345037 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 369258708561965426, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
@@ -4416,6 +4411,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: XR Origin Hands (XR Rig)
       objectReference: {fileID: 0}
+    - target: {fileID: 2218496723442559054, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2942156198692655549, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
       propertyPath: m_EnableFarCasting
       value: 0
@@ -5300,6 +5299,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1601320990}
   - component: {fileID: 1601320991}
+  - component: {fileID: 1601320992}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -5335,9 +5335,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalRounds: 10
+  currentRound: 1
+  score: 0
   pinPrefab: {fileID: 1661409097}
-  ball: {fileID: 845345036}
+  balls: []
   pinCounter: {fileID: 614727361}
+  timer: 5
+  pinsBarrier: {fileID: 8144394004122276022}
+--- !u!65 &1601320992
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601320989}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.27, y: 3.26, z: 10.79}
+  m_Center: {x: -16.24, y: 0.74, z: 0}
 --- !u!1 &1660973857
 GameObject:
   m_ObjectHideFlags: 0
@@ -6633,7 +6658,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503725, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9357,7 +9382,7 @@ Transform:
   m_GameObject: {fileID: 8144394004122276022}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 4.055538, y: 0.7017647, z: -18.74331}
+  m_LocalPosition: {x: 3.974, y: 0.743, z: -18.74331}
   m_LocalScale: {x: 1, y: 1.040207, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14140,6 +14165,10 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 13400000, guid: 7ae8122bbacd50a4f8be12db08b6d296, type: 2}
+    - target: {fileID: 4401719126305494216, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
+      propertyPath: m_TagString
+      value: Ball
+      objectReference: {fileID: 0}
     - target: {fileID: 4507741761035944171, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.47
@@ -14183,6 +14212,14 @@ PrefabInstance:
     - target: {fileID: 5779643257941476006, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
       propertyPath: m_AngularDrag
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5900906661101857078, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
+      propertyPath: m_TagString
+      value: Ball
+      objectReference: {fileID: 0}
+    - target: {fileID: 6604706038288574035, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
+      propertyPath: m_TagString
+      value: Ball
       objectReference: {fileID: 0}
     - target: {fileID: 6963061974528824595, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -14443,6 +14480,14 @@ PrefabInstance:
     - target: {fileID: 8757304896999292251, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
       propertyPath: m_HoverEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802527524261428125, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
+      propertyPath: m_TagString
+      value: Ball
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842883210609335274, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
+      propertyPath: m_TagString
+      value: Ball
       objectReference: {fileID: 0}
     - target: {fileID: 8975153490675986326, guid: 77da4ed0bb9fc4b46b2ff571c713e9f4, type: 3}
       propertyPath: m_HoverExited.m_PersistentCalls.m_Calls.Array.size
@@ -15009,6 +15054,7 @@ GameObject:
   - component: {fileID: 2707245409156127566}
   - component: {fileID: 1714938218100778682}
   - component: {fileID: 8835409690123604912}
+  - component: {fileID: 8835409690123604914}
   m_Layer: 0
   m_Name: PinsBarrier
   m_TagString: Untagged
@@ -15792,6 +15838,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!95 &8835409690123604914
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8144394004122276022}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5b034db98b3aa78438e925a985530450, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8936857557446917120
 GameObject:
   m_ObjectHideFlags: 0

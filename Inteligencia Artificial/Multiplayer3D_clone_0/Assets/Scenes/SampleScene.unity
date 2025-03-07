@@ -418,9 +418,9 @@ MonoBehaviour:
   PlayerJoined:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 591263432}
         m_TargetAssemblyTypeName: FirstPersonCamera, Assembly-CSharp
-        m_MethodName: SetTarget
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -511,9 +511,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 95d01cd4e3638a84f80aa093256b3c92, type: 2}
   PlayerPrefab: {fileID: 5764879932708280348, guid: 845b3f81766d13349a95a4ee4b0109e1, type: 3}
   minX: 10
-  maxX: 10
+  maxX: -10
   minZ: 10
-  maxZ: 10
+  maxZ: -10
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

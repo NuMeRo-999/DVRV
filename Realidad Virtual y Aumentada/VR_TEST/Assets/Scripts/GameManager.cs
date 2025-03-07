@@ -4,21 +4,26 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public int totalRounds = 10;
-    private int currentRound = 1;
-    private int score = 0;
+    public int currentRound = 1;
+    public int score = 0;
     private int remainingPins;
     public GameObject pinPrefab;
-    public GameObject ball;
+    public GameObject[] balls;
     public PinCounter pinCounter;
-    private Vector3 ballStartPosition;
+    private Vector3[] ballsStartPosition;
     private Transform[] pinPositions;
     private GameObject[] pins;
+    public float timer = 5;
+    [SerializeField] private GameObject pinsBarrier;
 
     void Start()
     {
-        ballStartPosition = ball.transform.position;
+        foreach (GameObject ball in balls)
+        {
+            ball.transform.position = ballsStartPosition[System.Array.IndexOf(balls, ball)];
+        }
         InitializePins();
-        ResetRound();
+        // ResetRound();
     }
 
     void Update()
@@ -50,6 +55,7 @@ public class GameManager : MonoBehaviour
                 remainingPins++;
             }
         }
+        print(remainingPins);
         return remainingPins == 0;
     }
 
@@ -59,6 +65,7 @@ public class GameManager : MonoBehaviour
         if (currentRound < totalRounds)
         {
             currentRound++;
+            print("Next round: " + currentRound);
             ResetRound();
         }
         else
@@ -69,9 +76,17 @@ public class GameManager : MonoBehaviour
 
     private void ResetRound()
     {
-        ball.transform.position = ballStartPosition;
-        ball.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-        ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        pinsBarrier.GetComponent<Animator>().SetTrigger("OpenClose");
+
+        foreach (GameObject ball in balls)
+        {
+            ball.transform.position = ballsStartPosition[System.Array.IndexOf(balls, ball)];
+            ball.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+            ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        }
+
+        UpdateScore(pinCounter.fallenPins);
+        pinCounter.fallenPins = 0;
         
         foreach (GameObject pin in pins)
         {
@@ -83,7 +98,7 @@ public class GameManager : MonoBehaviour
             {
                 pin.SetActive(true);
                 pin.transform.position = pinPositions[System.Array.IndexOf(pins, pin) + 1].position;
-                pin.transform.rotation = Quaternion.Euler(-90, 0, 0);
+                // pin.transform.rotation = Quaternion.Euler(-90, 0, 0);
             }
         }
         
@@ -93,5 +108,25 @@ public class GameManager : MonoBehaviour
     public void UpdateScore(int pins)
     {
         score += pins;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Ball"))
+        {
+            StartCoroutine(DecreaseTimer());
+        }
+    }
+
+    private IEnumerator DecreaseTimer()
+    {
+        while (timer > 0)
+        {
+            timer -= Time.deltaTime;
+            yield return null;
+        }
+
+        timer = 5;
+        ResetRound();
     }
 }
